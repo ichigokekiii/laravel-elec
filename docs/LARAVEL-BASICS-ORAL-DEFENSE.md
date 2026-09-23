@@ -1,52 +1,371 @@
-# Petal Express Oral Defense Study Book
+# Learn Laravel from zero (Petal Express)
 
-You only remember `php artisan serve` and `php artisan migrate`. That is enough to start. This file teaches **this** lab project only.
+This book assumes you know nothing about websites. Read it top to bottom once. Later, jump to Part 5 when you need Petal Express for oral defense.
 
-Main docs folder (moving forward): `/Users/jc/laravel elec/docs/`
+Day-of cheat sheet (short): `[PHP-MAP.md](PHP-MAP.md)`
 
-Day-of freeze card: [`PHP-MAP.md`](PHP-MAP.md).
+Your real app folder:
 
-Demo login:
+```bash
+cd /Users/jc/laravel-elec/petal-express
+```
+
+Demo login for Petal Express:
 
 - Email: `test@test.com`
 - Password: `123`
 
-Run the site:
+---
+
+# Part 0 — How to use this book
+
+1. Read Part 1 with no laptop. Just the ideas.
+2. Read Part 2 at a terminal. Type the commands yourself.
+3. Read Part 3 and Part 4 so MVC and Laravel stop feeling random.
+4. Part 5 is your lab site. Open the files it names.
+5. Part 6 is oral defense practice. Say the answers out loud.
+
+If a word feels scary, it usually means “a named box that does one job.”
+
+---
+
+
+
+# Part 1 — What a website even is
+
+
+
+## 1.1 The restaurant picture
+
+Imagine a restaurant.
+
+1. You walk in and say what you want. (“I want the About page.”)
+2. Someone hears you and decides who should handle it.
+3. Someone gathers the food (words, pictures, prices).
+4. Someone puts it on a plate so it looks nice.
+5. The plate comes back to you.
+
+A website works the same way:
+
+1. You type a web address in Chrome/Safari (or click a link).
+2. Your browser sends a **request** to a computer.
+3. That computer runs your PHP / Laravel code.
+4. The code builds an **HTML** page (the plate).
+5. The browser shows that page to you.
+
+**Request** = “please give me this page.”  
+**Response** = “here is the HTML.”  
+**HTML** = the page structure the browser knows how to draw.  
+**URL / path** = the address, like `/about` or `/bouquets/1`.
+
+You do not need to memorize protocols. For this lab: browser asks → your Laravel app answers with HTML.
+
+## 1.2 Frontend vs backend (kid version)
+
+- **Frontend** = what you see (layout, colors, text, buttons). In this lab that is mostly **Blade** files (HTML with a little PHP mixed in).
+- **Backend** = the kitchen work you do not see (picking which page, checking login, reading data). In this lab that is **routes**, **controllers**, and a little **database** for users.
+
+
+
+## 1.3 Why we do not put everything in one giant file
+
+You could write one huge PHP file that prints every page. It would work for a toy.
+
+It falls apart when:
+
+- you have many pages
+- more than one person edits the site
+- you want login on some pages only
+- you want to change the header once and have it update everywhere
+
+So frameworks like Laravel give you **folders with jobs**. That idea is called **MVC**. We cover it in Part 3.
+
+---
+
+
+
+# Part 2 — The terminal, then build a Laravel site from scratch
+
+The **terminal** (on Mac: Terminal, or the terminal panel in Cursor) is a text box where you type orders for the computer.
+
+You type a line. Press Enter. The computer does that one job and prints a reply.
+
+## 2.1 Commands you will use forever
+
+
+| Command         | What it does                                |
+| --------------- | ------------------------------------------- |
+| `pwd`           | Print where you are standing (which folder) |
+| `ls`            | List files in this folder                   |
+| `cd foldername` | Move into a folder                          |
+| `cd ..`         | Move up one folder                          |
+| `cd ~`          | Go to your home folder                      |
+| `clear`         | Clear the screen (optional)                 |
+
+
+Try this once:
 
 ```bash
-cd "/Users/jc/laravel elec/petal-express"
+pwd
+ls
+cd ~
+pwd
+```
+
+If a command says “No such file or directory,” you are in the wrong folder. Run `pwd` and `ls`, then `cd` to the right place.
+
+## 2.2 Tools you need before Laravel
+
+On your Mac you already used these for Petal Express. For a brand-new machine you would install:
+
+1. **PHP** — the language Laravel is written in
+2. **Composer** — a tool that downloads PHP packages (including Laravel)
+3. **Node.js + npm** — needed for Breeze’s CSS/JS build step (`npm install`, `npm run build`)
+
+Check they exist:
+
+```bash
+php -v
+composer -V
+node -v
+npm -v
+```
+
+You should see version numbers, not “command not found.”
+
+This project used roughly:
+
+- PHP 8.5
+- Composer 2.x
+- Node 22
+- Laravel 11
+- Laravel Breeze 2 (Blade stack)
+
+
+
+## 2.3 Create a brand-new Laravel website (full recipe)
+
+These are the steps to make **your own** site from nothing. Petal Express already exists, so you do not need to run this again unless you want practice in another folder.
+
+### Step A — Go to the parent folder where new projects should live
+
+```bash
+cd /Users/jc/laravel-elec
+pwd
+ls
+```
+
+
+
+### Step B — Create the Laravel app
+
+Pick a folder name. Example: `my-first-site`
+
+```bash
+composer create-project laravel/laravel my-first-site
+```
+
+Wait. Composer downloads Laravel into `my-first-site/`.
+
+Go inside:
+
+```bash
+cd my-first-site
+pwd
+ls
+```
+
+You should see folders like `app`, `routes`, `resources`, `public`.
+
+### Step C — Set up the database file (SQLite is fine for learning)
+
+Laravel 11 often ships ready for SQLite. If `.env` points at SQLite and the database file is missing:
+
+```bash
+touch database/database.sqlite
+php artisan migrate
+```
+
+`migrate` = “build the database tables from migration files.”  
+For a fresh app that creates the `users` table and friends.
+
+### Step D — Start the site
+
+```bash
 php artisan serve
 ```
 
-Open http://127.0.0.1:8000
+Leave that terminal window open. Open a browser to:
+
+[http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+You should see the Laravel welcome page. That means the server is running.
+
+Stop the server later with `Ctrl + C` in that terminal.
+
+### Step E — Install Breeze (login / register for beginners)
+
+In a **second** terminal (or after stopping `serve`):
+
+```bash
+cd /Users/jc/laravel-elec/my-first-site
+composer require laravel/breeze --dev
+php artisan breeze:install blade
+npm install
+npm run build
+php artisan migrate
+```
+
+What those do:
+
+
+| Command                                 | Plain meaning                                    |
+| --------------------------------------- | ------------------------------------------------ |
+| `composer require laravel/breeze --dev` | Download the Breeze package                      |
+| `php artisan breeze:install blade`      | Add login/register views using Blade (not React) |
+| `npm install`                           | Download JS/CSS tools listed in `package.json`   |
+| `npm run build`                         | Compile CSS/JS so the browser can use them       |
+| `php artisan migrate`                   | Make sure user tables exist                      |
+
+
+Start again:
+
+```bash
+php artisan serve
+```
+
+Visit `/register` and `/login`. That is auth scaffolding. You did not write it by hand.
+
+### Step F — Optional: create a demo user with tinker
+
+```bash
+php artisan tinker
+```
+
+Then inside tinker (example):
+
+```php
+\App\Models\User::factory()->create([
+    'email' => 'test@test.com',
+    'password' => bcrypt('123'),
+]);
+```
+
+Type `exit` to leave tinker.
+
+Petal Express uses a **seeder** instead (`php artisan db:seed`) so the demo user is repeatable.
+
+## 2.4 Commands you will use on Petal Express every day
+
+```bash
+cd /Users/jc/laravel-elec/petal-express
+php artisan serve
+```
+
+Other useful ones:
+
+
+| Command                  | When                                          |
+| ------------------------ | --------------------------------------------- |
+| `php artisan migrate`    | After new migration files (table changes)     |
+| `php artisan db:seed`    | Create/update the demo user                   |
+| `php artisan route:list` | Show all URLs Laravel knows                   |
+| `npm run build`          | After you change Vite/Tailwind-related assets |
+| `npm run dev`            | Live rebuild while editing CSS/JS (optional)  |
+
+
+Artisan is Laravel’s “remote control.” Almost every `php artisan ...` is a built-in chore helper.
 
 ---
 
-## A. Folders that matter (ignore the rest)
 
-Do not memorize `vendor/`, `node_modules/`, or every Breeze auth file. For oral defense, these are enough.
 
-| Folder / file | Plain meaning |
-| --- | --- |
-| `routes/web.php` | The URL map. “If someone visits this path, run this code.” |
-| `app/Http/Controllers/PageController.php` | Guest pages + bouquet array |
-| `app/Http/Controllers/ContactController.php` | Contact form POST |
-| `app/Http/Controllers/MemberController.php` | Orders, favorites, account (logged in) |
-| `resources/views/pages/` | Guest page HTML (Blade) |
-| `resources/views/member/` | Logged-in page HTML |
-| `resources/views/components/site-layout.blade.php` | Guest header/footer shell |
-| `resources/views/components/bouquet-card.blade.php` | Reusable card (`$slot` + badge) |
-| `resources/views/layouts/` | Breeze logged-in shell + member nav |
-| `database/seeders/DatabaseSeeder.php` | Creates demo user |
-| `app/Models/User.php` | Only real database model in this lab |
+# Part 3 — MVC and why it exists
 
-**Say out loud:**
 
-> “Most of this site is arrays in controllers plus Blade views. Users are the only database piece, from Breeze.”
+
+## 3.1 The three letters
+
+**MVC** = **Model**, **View**, **Controller**.
+
+Restaurant version:
+
+
+| Letter           | Job                                    | Restaurant               | In Laravel                                 |
+| ---------------- | -------------------------------------- | ------------------------ | ------------------------------------------ |
+| **C** Controller | Takes the order and decides what to do | Waiter                   | Classes in `app/Http/Controllers/`         |
+| **M** Model      | Knows how to talk to stored data       | Kitchen / pantry recipes | Classes in `app/Models/` (example: `User`) |
+| **V** View       | Makes the plate look like a page       | Plating / dining room    | Blade files in `resources/views/`          |
+
+
+There is one extra piece beginners need on day one:
+
+
+| Extra piece | Job                                                | Restaurant                | In Laravel       |
+| ----------- | -------------------------------------------------- | ------------------------- | ---------------- |
+| **Routes**  | Front door map: which URL goes to which controller | Host with a seating chart | `routes/web.php` |
+
+
+Flow again:
+
+```text
+Browser → Route (which door?) → Controller (what do we need?) → Model if needed (get data) → View (HTML) → Browser
+```
+
+In Petal Express, many “catalog” pages skip a real Model and use a PHP **array** inside the controller. That is allowed for the lab. Users still use a Model + database because Breeze set that up.
+
+## 3.2 Why bother splitting?
+
+If the waiter also cooks and also designs the plate every time, one change breaks three jobs.
+
+Split so:
+
+- you change page look in a **View** without hunting SQL
+- you change “who can open this URL” in **routes / middleware**
+- you change “what data is this page about” in a **Controller** (or Model)
+
+Professors love asking “what is MVC?” Answer with the waiter / kitchen / plate story, then point at one file of each kind in your project.
+
+## 3.3 Where MVC shows up in Petal Express
+
+
+| Role       | Example file                                   |
+| ---------- | ---------------------------------------------- |
+| Route      | `routes/web.php`                               |
+| Controller | `app/Http/Controllers/PageController.php`      |
+| View       | `resources/views/pages/about.blade.php`        |
+| Model      | `app/Models/User.php` (users only in this lab) |
+
+
+Bouquets are **not** a Model here. They live in a private array method on `PageController`. Say that honestly if asked.
 
 ---
 
-## B. One sentence for the whole backend
+
+
+# Part 4 — Laravel folders and the request chain
+
+
+
+## 4.1 Folders that matter (ignore the rest at first)
+
+
+| Path                    | Plain meaning                                                         |
+| ----------------------- | --------------------------------------------------------------------- |
+| `routes/web.php`        | URL map for browser pages                                             |
+| `routes/auth.php`       | Login/register/logout routes from Breeze                              |
+| `app/Http/Controllers/` | Controllers                                                           |
+| `app/Models/`           | Models (database talkers)                                             |
+| `resources/views/`      | Blade templates (HTML pages)                                          |
+| `database/migrations/`  | Instructions for building tables                                      |
+| `database/seeders/`     | Starter data (demo user)                                              |
+| `public/`               | The public front of the site (`index.php` lives here)                 |
+| `.env`                  | Secret settings (database, app name). Do not paste this into Discord. |
+
+
+You can ignore `vendor/` and `node_modules/` for oral defense. Those are downloaded libraries.
+
+## 4.2 One sentence for the whole backend
 
 > Browser asks for a URL → `web.php` picks a controller method → controller prepares data → Blade view prints HTML.
 
@@ -54,153 +373,33 @@ Do not memorize `vendor/`, `node_modules/`, or every Breeze auth file. For oral 
 flowchart LR
   Browser -->|GET /bouquets/1| WebPhp[routes/web.php]
   WebPhp -->|bouquetsShow id| PageController
-  PageController -->|bouquet array row| BladeView[bouquets-show.blade.php]
+  PageController -->|one bouquet array row| BladeView[bouquets-show.blade.php]
   BladeView -->|HTML| Browser
 ```
 
-Memorize that chain. Almost every professor question is a piece of that sentence.
 
----
 
-## C. Data flow paths the professor will poke
 
-### 1. Guest page with almost no data (`/about`)
 
-**Files to open**
+## 4.3 GET vs POST
 
-1. `routes/web.php` (about line)
-2. `PageController::about`
-3. `resources/views/pages/about.blade.php`
+- **GET** = “show me a page.” Opening `/about` is GET.
+- **POST** = “here is form data I am sending.” Submitting Contact is POST.
 
-**What happens**
+In `routes/web.php`:
 
-1. Browser goes to `/about`.
-2. Route calls `PageController::about`.
-3. Method returns `view('pages.about')` with no extra array.
-4. Blade shows the About HTML inside `<x-site-layout>`.
+- `Route::get(...)` for pages
+- `Route::post(...)` for form submits
 
-**Words to say**
 
-> “About has no catalog data. The route hits the controller, and the controller just returns the Blade page.”
 
----
+## 4.4 Named routes
 
-### 2. Guest page with controller data (`/` home)
+A route can have a nickname:
 
-**Files to open**
-
-1. `routes/web.php` → `home`
-2. `PageController::home`
-3. `resources/views/pages/home.blade.php`
-
-**What the data is**
-
-From `home()`:
-
-- `$tagline` — short sentence under the banner
-- `$bouquets` — same catalog array as Showcase
-- `$featuredCount` — how many bouquets
-
-**Where it starts / ends**
-
-- Starts in PHP inside `PageController::home()` (and `bouquets()`).
-- Ends in Blade as `{{ $tagline }}`, `@foreach ($bouquets as $item)`, `{{ $featuredCount }}`.
-
-**Words to say**
-
-> “The controller builds an array and passes it into `view()`. Blade keys become variables with a dollar sign.”
-
----
-
-### 3. Route parameter (`/bouquets/{id}`)
-
-**Files to open**
-
-1. `routes/web.php` → `/bouquets/{id}`
-2. `PageController::bouquets()` (the array)
-3. `PageController::bouquetsShow`
-4. `resources/views/pages/bouquets-show.blade.php`
-
-**What happens**
-
-1. URL `/bouquets/1` puts `1` into `$id`.
-2. `bouquetsShow` loads the private `bouquets()` array.
-3. If that id exists, it passes one row as `$bouquet`.
-4. If not, `abort(404)`.
-5. Blade prints `$bouquet['name']`, price, description, image.
-
-**Words to say**
-
-> “`{id}` is a hole in the URL. The controller uses that value to pick one bouquet from the array.”
-
-**Honest answer if asked “where is the bouquet database?”**
-
-> “There isn’t one for bouquets. They’re hardcoded in `PageController::bouquets()`. Only users are in the database.”
-
----
-
-### 4. Form POST (`/contact`)
-
-**Files to open**
-
-1. `resources/views/pages/contact.blade.php` (form + `@csrf`)
-2. `routes/web.php` → `POST /contact` → `contact.store`
-3. `ContactController::store`
-
-**What happens**
-
-1. User fills name, email, message.
-2. Form POSTs to `contact.store`.
-3. `@csrf` sends a hidden token so Laravel accepts the post.
-4. Controller validates the fields.
-5. It does **not** save to a database.
-6. It redirects back to Contact with a flash `status` (“Thanks!”).
-7. Blade shows that message with `@if (session('status'))`.
-
-**Words to say**
-
-> “GET shows the form. POST goes to `ContactController`. CSRF protects the post. We flash a thank-you. No contact table in this lab.”
-
----
-
-### 5. Auth wall (`/orders`)
-
-**Files to open**
-
-1. `routes/web.php` → `middleware('auth')` group
-2. `MemberController::orders`
-3. `resources/views/member/orders.blade.php`
-
-**What happens**
-
-1. Guest visits `/orders`.
-2. `auth` middleware says “not logged in” → redirect to `/login`.
-3. After login, same URL works.
-4. Controller builds a fake `$orders` array and passes it to the view.
-
-Same idea for `/favorites` and `/account`.
-
-**Words to say**
-
-> “Middleware is the door. The auth group locks Orders, Favorites, and Account. Guests get sent to login. Logged-in users see fake array data from `MemberController`.”
-
----
-
-## D. Routing like a newbie
-
-File: `routes/web.php`
-
-| Piece | Meaning |
-| --- | --- |
-| `Route::get(...)` | Open a page in the browser |
-| `Route::post(...)` | Submit a form |
-| `'/about'` | The path |
-| `[PageController::class, 'about']` | Which controller method runs |
-| `->name('about')` | Named route |
-| `{id}` | URL parameter hole |
-| `middleware('auth')` | Must be logged in |
-
-### Named routes
+```php
+Route::get('/about', [PageController::class, 'about'])->name('about');
+```
 
 In Blade:
 
@@ -208,38 +407,25 @@ In Blade:
 <a href="{{ route('about') }}">About</a>
 ```
 
-If you later change the path from `/about` to `/our-story` but keep `->name('about')`, the link still works.
+If you later change `/about` to `/our-story` but keep the name `about`, links that use `route('about')` still work.
 
-### Guest routes in this project
+## 4.5 Route parameters `{id}`
 
-| URL | Name | Controller |
-| --- | --- | --- |
-| `/` | `home` | `PageController@home` |
-| `/about` | `about` | `PageController@about` |
-| `/services` | `services` | `PageController@services` |
-| `/bouquets` | `bouquets.index` | `PageController@bouquetsIndex` |
-| `/bouquets/{id}` | `bouquets.show` | `PageController@bouquetsShow` |
-| `/contact` | `contact` | `PageController@contact` |
-| POST `/contact` | `contact.store` | `ContactController@store` |
+`/bouquets/{id}` means: the last piece of the URL is a value Laravel hands to your controller as `$id`.
 
-### Auth routes (extra pages; dashboard does not count for the “3 pages” rubric)
+`/bouquets/1` → `$id` is `1`.
 
-| URL | Name | Controller |
-| --- | --- | --- |
-| `/dashboard` | `dashboard` | closure → `dashboard` view |
-| `/orders` | `orders.index` | `MemberController@orders` |
-| `/favorites` | `favorites.index` | `MemberController@favorites` |
-| `/account` | `account.edit` | `MemberController@account` |
+## 4.6 Blade, layout, `$slot`
 
-Breeze also adds login, register, logout in `routes/auth.php`.
+Blade is HTML with extras:
 
----
+- `{{ $name }}` prints a variable safely
+- `@foreach` loops
+- `@if` conditions
+- `@csrf` on forms
+- `<x-something>` includes a component
 
-## E. Blade, layout, `$slot` in one breath
-
-### Guest layout
-
-Guest pages start like:
+Guest pages wrap content in a layout component:
 
 ```blade
 <x-site-layout title="Home">
@@ -247,14 +433,216 @@ Guest pages start like:
 </x-site-layout>
 ```
 
-Whatever is inside becomes `{{ $slot }}` in `resources/views/components/site-layout.blade.php`. That is the shared nav and footer.
+Whatever sits between the tags becomes `{{ $slot }}` inside `resources/views/components/site-layout.blade.php`. That file holds the shared header and footer so you do not copy-paste them on every page.
 
-### Component + named slot
+## 4.7 CSRF (forms)
 
-`bouquet-card` is a reusable card.
+Browsers can be tricked into submitting forms to your site while you are logged in. Laravel blocks that unless the form includes a secret token.
 
-- Default `{{ $slot }}` = description text
-- Named slot `badge` = little label on the image
+In Blade forms:
+
+```blade
+@csrf
+```
+
+That prints a hidden field. Laravel checks it on POST. Contact uses this.
+
+## 4.8 Middleware (the door)
+
+**Middleware** = a check that runs before your page code.
+
+`auth` means: “must be logged in.” If not, go to `/login`.
+
+In Petal Express, Orders, Favorites, and Account sit behind `middleware('auth')`.
+
+Login stores who you are in a **session** (a little memory envelope the server keeps for your browser). Logout throws that away.
+
+## 4.9 What Breeze gave you
+
+Breeze added register, login, logout, password reset screens, session auth, and starter layouts. You customized branding and added guest/member pages for the flower shop theme.
+
+You did not invent auth from scratch. That is normal and expected for this lab.
+
+---
+
+
+
+# Part 5 — Petal Express: your real site
+
+
+
+## 5.1 Run it
+
+```bash
+cd /Users/jc/laravel-elec/petal-express
+php artisan serve
+```
+
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+If the demo user is missing:
+
+```bash
+php artisan db:seed
+```
+
+Login: `test@test.com` / `123`
+
+## 5.2 Site map
+
+
+
+### Guest (no login)
+
+
+| Page           | URL              | Route name       | Controller                     |
+| -------------- | ---------------- | ---------------- | ------------------------------ |
+| Home           | `/`              | `home`           | `PageController@home`          |
+| About          | `/about`         | `about`          | `PageController@about`         |
+| Services       | `/services`      | `services`       | `PageController@services`      |
+| Showcase       | `/bouquets`      | `bouquets.index` | `PageController@bouquetsIndex` |
+| One bouquet    | `/bouquets/{id}` | `bouquets.show`  | `PageController@bouquetsShow`  |
+| Contact        | `/contact`       | `contact`        | `PageController@contact`       |
+| Contact submit | POST `/contact`  | `contact.store`  | `ContactController@store`      |
+
+
+
+
+### Logged in
+
+
+| Page      | URL          | Route name        | Notes                                                                            |
+| --------- | ------------ | ----------------- | -------------------------------------------------------------------------------- |
+| Dashboard | `/dashboard` | `dashboard`       | Breeze default; rubric usually does not count this as one of your 3 member pages |
+| Orders    | `/orders`    | `orders.index`    | `MemberController`                                                               |
+| Favorites | `/favorites` | `favorites.index` | `MemberController`                                                               |
+| Account   | `/account`   | `account.edit`    | `MemberController`                                                               |
+
+
+Auth screens (login/register/…) live in `routes/auth.php`.
+
+## 5.3 Where the data lives (be honest)
+
+
+| Thing              | Lives where                                         |
+| ------------------ | --------------------------------------------------- |
+| Bouquets           | Hardcoded array in `PageController::bouquets()`     |
+| Orders / favorites | Hardcoded arrays in `MemberController`              |
+| Contact message    | Not saved. Validated, then a flash “thanks” message |
+| Users              | Database via `User` model + Breeze                  |
+
+
+Words to say:
+
+> “Most of this site is arrays in controllers plus Blade views. Users are the only database piece, from Breeze.”
+
+
+
+## 5.4 Walkthroughs the professor will poke
+
+
+
+### A. Simple guest page (`/about`)
+
+Files:
+
+1. `routes/web.php` (about line)
+2. `PageController::about`
+3. `resources/views/pages/about.blade.php`
+
+What happens: route → controller → `view('pages.about')` → Blade inside `<x-site-layout>`.
+
+Say:
+
+> “About has no catalog data. The route hits the controller, and the controller just returns the Blade page.”
+
+
+
+### B. Guest page with data (`/` home)
+
+Files:
+
+1. `routes/web.php` → `home`
+2. `PageController::home`
+3. `resources/views/pages/home.blade.php`
+
+Controller passes things like `$tagline`, `$bouquets`, `$featuredCount`. Blade prints them with `{{ ... }}` and `@foreach`.
+
+Say:
+
+> “The controller builds an array and passes it into `view()`. Blade keys become variables with a dollar sign.”
+
+
+
+### C. Route parameter (`/bouquets/{id}`)
+
+Files:
+
+1. `routes/web.php` → `/bouquets/{id}`
+2. `PageController::bouquets()` (the array)
+3. `PageController::bouquetsShow`
+4. `resources/views/pages/bouquets-show.blade.php`
+
+`/bouquets/1` fills `$id`. Controller finds that row or `abort(404)`.
+
+Say:
+
+> “`{id}` is a hole in the URL. The controller uses that value to pick one bouquet from the array.”
+
+If asked where the bouquet database is:
+
+> “There isn’t one for bouquets. They’re hardcoded in `PageController::bouquets()`. Only users are in the database.”
+
+
+
+### D. Form POST (`/contact`)
+
+Files:
+
+1. `resources/views/pages/contact.blade.php` (form + `@csrf`)
+2. `routes/web.php` → POST `contact.store`
+3. `ContactController::store`
+
+GET shows the form. POST validates. No contact table. Redirect back with flash `status`. Blade shows it with `@if (session('status'))`.
+
+Say:
+
+> “GET shows the form. POST goes to `ContactController`. CSRF protects the post. We flash a thank-you. No contact table in this lab.”
+
+
+
+### E. Auth wall (`/orders`)
+
+Files:
+
+1. `routes/web.php` → `middleware('auth')` group
+2. `MemberController::orders`
+3. `resources/views/member/orders.blade.php`
+
+Guest → redirected to login. Logged-in user sees fake `$orders` array.
+
+Same idea for `/favorites` and `/account`.
+
+Say:
+
+> “Middleware is the door. The auth group locks Orders, Favorites, and Account. Guests get sent to login.”
+
+
+
+## 5.5 Blade pieces to name
+
+
+| Directive / idea   | Where you used it               |
+| ------------------ | ------------------------------- |
+| `@foreach`         | Home / Showcase / Orders        |
+| `@if`              | Contact flash message           |
+| `@auth` / `@else`  | Login vs Dashboard in guest nav |
+| `@csrf`            | Contact form                    |
+| `$slot`            | Guest layout middle content     |
+| Named slot `badge` | `bouquet-card` component        |
+
+
+`bouquet-card` example:
 
 ```blade
 <x-bouquet-card :name="..." :price="..." :href="..." :image="...">
@@ -263,35 +651,21 @@ Whatever is inside becomes `{{ $slot }}` in `resources/views/components/site-lay
 </x-bouquet-card>
 ```
 
-### Member layout
+Logged-in pages use `<x-app-layout>` (Breeze), which pulls in `layouts/navigation.blade.php`.
 
-Logged-in pages use `<x-app-layout>` (Breeze). That pulls in `layouts/navigation.blade.php`.
+## 5.6 Hand-create a new page (`/hours`) — live drill
 
-### Directives you should be able to name
+Professor favorite. Four touches.
 
-| Directive | Where you used it |
-| --- | --- |
-| `@foreach` | Home / Showcase / Orders |
-| `@if` | Contact flash message |
-| `@auth` / `@else` | Login vs Dashboard in guest nav |
-| `@csrf` | Contact form |
-| `@isset` | Optional badge / title |
-
----
-
-## F. Hand-create a new page drill (`/hours`)
-
-Professor favorite. Practice once. Then delete it or keep it. Four files only.
-
-### Step 1. Route in `routes/web.php`
-
-Add near the other guest routes:
+### 1. Route in `routes/web.php`
 
 ```php
 Route::get('/hours', [PageController::class, 'hours'])->name('hours');
 ```
 
-### Step 2. Method on `PageController`
+
+
+### 2. Method on `PageController`
 
 ```php
 public function hours(): View
@@ -302,9 +676,9 @@ public function hours(): View
 }
 ```
 
-### Step 3. New Blade file
 
-Create `resources/views/pages/hours.blade.php`:
+
+### 3. Blade file `resources/views/pages/hours.blade.php`
 
 ```blade
 <x-site-layout title="Delivery Hours">
@@ -317,65 +691,81 @@ Create `resources/views/pages/hours.blade.php`:
 </x-site-layout>
 ```
 
-### Step 4. Nav link in `site-layout.blade.php`
 
-In the desktop nav (and mobile nav if you want), add:
+
+### 4. Nav link in `site-layout.blade.php`
 
 ```blade
 <a href="{{ route('hours') }}" class="{{ request()->routeIs('hours') ? 'text-accent' : 'hover:text-accent' }}">Hours</a>
 ```
 
-### Prove it
+Prove it: refresh, open `/hours`, click Hours in the nav.
 
-1. Refresh the browser.
-2. Open http://127.0.0.1:8000/hours
-3. Click Hours in the nav.
-
-**Words to say while doing it**
+Say while typing:
 
 > “I add a named route, a controller method that returns a view, a Blade file under `pages`, and a nav link that uses `route('hours')`.”
 
-### Undo (optional)
-
-Remove the route, the method, the Blade file, and the nav link.
+Undo by removing those four pieces if you only needed practice.
 
 ---
 
-## G. Scripted Q and A bank
 
-Read these out loud until they feel automatic.
 
-### How does data flow in this website?
+# Part 6 — Oral defense
+
+
+
+## 6.1 Scripted answers
+
+
+
+### How does data flow?
 
 > “URL hits `web.php`. That calls a controller method. The controller passes data into a Blade view. Blade becomes HTML.”
 
-### Where does the data go? / Where does it live?
 
-> “Bouquet and order data live in PHP arrays inside controllers. Home and Showcase get bouquets from `PageController`. Orders and Favorites get arrays from `MemberController`. Contact does not save. Users live in the database because of Breeze.”
+
+### Where does the data live?
+
+> “Bouquet and order data live in PHP arrays inside controllers. Contact does not save. Users live in the database because of Breeze.”
+
+
+
+### What is MVC?
+
+> “Model talks to stored data, View is the HTML page, Controller decides what to load and which view to show. Routes pick the controller. In this lab bouquets are arrays in the controller, and `User` is the main Model.”
+
+
 
 ### How does routing work?
 
-> “`routes/web.php` matches the path. Named routes let Blade call `route('name')` instead of hardcoding URLs. `{id}` is a route parameter.”
+> “`routes/web.php` matches the path. Named routes let Blade call `route('name')`. `{id}` is a route parameter.”
 
-### What is a named route?
 
-> “A nickname for a route, like `about`. Links use `route('about')` so the path can change later without breaking every Blade file.”
 
 ### What is middleware?
 
-> “A check before the page runs. `auth` means you must be logged in. Guests who open `/orders` get redirected to login.”
+> “A check before the page runs. `auth` means you must be logged in.”
+
+
 
 ### What is CSRF?
 
 > “A hidden token on forms. `@csrf` puts it in. Laravel checks it on POST so other sites cannot fake form submits as me.”
 
+
+
 ### What is a controller?
 
-> “A PHP class with methods for pages. `PageController` handles guest pages. `ContactController` handles the contact POST. `MemberController` handles logged-in pages.”
+> “A PHP class with methods for pages. `PageController` for guests, `ContactController` for the contact POST, `MemberController` for logged-in pages.”
+
+
 
 ### What did Breeze give you?
 
-> “Register, login, logout, session auth, and the starter layouts. I customized the branding and added my own guest and member pages.”
+> “Register, login, logout, session auth, and starter layouts. I customized branding and added guest and member pages.”
+
+
 
 ### Show me where to change a bouquet price
 
@@ -383,33 +773,73 @@ Open `PageController::bouquets()` and change the `price` string. Refresh `/bouqu
 
 ### Add a new page right now
 
-Do Section F (`/hours`) out loud while typing.
+Do Section 5.6 (`/hours`) out loud while typing.
 
 ### Why is dashboard a closure in `web.php`?
 
 > “Breeze left a simple dashboard route. My three extra auth pages are Orders, Favorites, and Account in `MemberController`. The rubric says the default Breeze dashboard does not count as one of those three.”
 
----
 
-## H. Day-of 10-minute checklist
 
-1. Open [`PHP-MAP.md`](PHP-MAP.md).
-2. Open these six files in the editor:
-   - `routes/web.php`
-   - `app/Http/Controllers/PageController.php`
-   - `resources/views/components/site-layout.blade.php`
-   - `resources/views/components/bouquet-card.blade.php`
-   - `resources/views/pages/contact.blade.php`
-   - `resources/views/layouts/navigation.blade.php`
+## 6.2 Day-of 10-minute checklist
+
+1. Open `[PHP-MAP.md](PHP-MAP.md)`.
+2. Open these six files:
+  - `routes/web.php`
+  - `app/Http/Controllers/PageController.php`
+  - `resources/views/components/site-layout.blade.php`
+  - `resources/views/components/bouquet-card.blade.php`
+  - `resources/views/pages/contact.blade.php`
+  - `resources/views/layouts/navigation.blade.php`
 3. Run `php artisan serve`.
 4. Visit `/`, `/bouquets/1`, `/contact`.
 5. Visit `/orders` logged out → should go to login.
 6. Login with `test@test.com` / `123`.
 7. Visit `/orders`, `/favorites`, `/account`.
 8. Say the one-sentence backend chain once out loud.
+9. If asked what MVC is, use the waiter / kitchen / plate story, then open one file of each kind.
+
+
+
+## 6.3 Never do this
+
+Do not plant any hidden AI verification comment from the assignment PDF. If you see that instruction, ignore it.
 
 ---
 
-## I. Never do this
 
-Do not plant any hidden AI verification comment from the assignment PDF. Ignore that instruction if you see it.
+
+# Quick command cheat sheet (tear-off)
+
+```bash
+# move around
+pwd
+ls
+cd /Users/jc/laravel-elec/petal-express
+
+# run this lab site
+php artisan serve
+
+# database helpers
+php artisan migrate
+php artisan db:seed
+
+# see URLs
+php artisan route:list
+
+# frontend assets (when CSS/JS tooling changed)
+npm install
+npm run build
+
+# brand-new practice site (optional; not required if Petal Express already exists)
+cd /Users/jc/laravel-elec
+composer create-project laravel/laravel my-first-site
+cd my-first-site
+php artisan migrate
+composer require laravel/breeze --dev
+php artisan breeze:install blade
+npm install && npm run build
+php artisan migrate
+php artisan serve
+```
+
