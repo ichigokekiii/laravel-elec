@@ -1,14 +1,18 @@
 # PHP map (day-of freeze card)
 
-Main docs folder: `/Users/jc/laravel elec/docs/`
+Main docs folder: `/Users/jc/laravel-elec/docs/`
 
-Full study book: [`LARAVEL-BASICS-ORAL-DEFENSE.md`](LARAVEL-BASICS-ORAL-DEFENSE.md)
+Full from-zero teacher book: `[LARAVEL-BASICS-ORAL-DEFENSE.md](LARAVEL-BASICS-ORAL-DEFENSE.md)`
 
 App code lives in `petal-express/`. Paths below are relative to that app folder.
 
 ## One sentence
 
 URL → `routes/web.php` → controller → Blade view → HTML.
+
+## MVC in one line
+
+Routes = door map · Controller = waiter · Model = kitchen data · View = the plate (HTML).
 
 ## Open these 6 files first
 
@@ -19,6 +23,8 @@ URL → `routes/web.php` → controller → Blade view → HTML.
 5. `petal-express/resources/views/pages/contact.blade.php` — form + `@csrf`
 6. `petal-express/resources/views/layouts/navigation.blade.php` — themed Breeze member nav
 
+
+
 ## Five plain ideas
 
 1. A URL hits your app. PHP runs some code. HTML comes back.
@@ -27,18 +33,31 @@ URL → `routes/web.php` → controller → Blade view → HTML.
 4. Login stores you in a session. `auth` middleware checks it before protected pages.
 5. `{id}` in `/bouquets/{id}` is a route parameter. The controller uses it to pick one bouquet.
 
+
+
 ## Where is the data?
 
-| Thing | Lives where |
-| --- | --- |
-| Bouquets | Hardcoded array in `PageController::bouquets()` |
-| Orders / favorites | Hardcoded arrays in `MemberController` |
-| Contact message | Not saved. Validated, then flash thank-you |
-| Users | Database (`User` model + Breeze) |
+
+| Thing              | Lives where                                     |
+| ------------------ | ----------------------------------------------- |
+| Bouquets           | Hardcoded array in `PageController::bouquets()` |
+| Orders / favorites | Hardcoded arrays in `MemberController`          |
+| Contact message    | Not saved. Validated, then flash thank-you      |
+| Users              | Database (`User` model + Breeze)                |
+
+
+
 
 ## Demo login
 
 `test@test.com` / `123`
+
+```bash
+cd /Users/jc/laravel-elec/petal-express
+php artisan serve
+```
+
+
 
 ## If told “add a page”
 
@@ -47,4 +66,4 @@ URL → `routes/web.php` → controller → Blade view → HTML.
 3. Blade under `resources/views/pages/`
 4. Nav link with `route('...')`
 
-Worked example in the study book: Section F (`/hours`).
+Worked example in the teacher book: **Section 5.6** (`/hours`).

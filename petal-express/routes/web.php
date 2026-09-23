@@ -11,6 +11,7 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/bouquets', [PageController::class, 'bouquetsIndex'])->name('bouquets.index');
+
 // {id} is the route parameter for one bouquet
 Route::get('/bouquets/{id}', [PageController::class, 'bouquetsShow'])->name('bouquets.show');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');

@@ -9,7 +9,7 @@ class MemberController extends Controller
 {
     public function orders(): View
     {
-        // fake orders for the lab. change these if the prof asks
+        // fake orders hehehe
         $orders = [
             ['code' => 'PE-1042', 'status' => 'Out for delivery', 'total' => '₱1,899'],
             ['code' => 'PE-1038', 'status' => 'Delivered', 'total' => '₱1,299'],
