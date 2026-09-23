@@ -2,7 +2,7 @@
 
 Main docs folder: `/Users/jc/laravel-elec/docs/`
 
-Full from-zero teacher book: `[LARAVEL-BASICS-ORAL-DEFENSE.md](LARAVEL-BASICS-ORAL-DEFENSE.md)`
+Full from-zero teacher book: [`LARAVEL-BASICS-ORAL-DEFENSE.md`](LARAVEL-BASICS-ORAL-DEFENSE.md)
 
 App code lives in `petal-express/`. Paths below are relative to that app folder.
 

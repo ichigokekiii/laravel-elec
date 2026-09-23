@@ -2,7 +2,7 @@
 
 This book assumes you know nothing about websites. Read it top to bottom once. Later, jump to Part 5 when you need Petal Express for oral defense.
 
-Day-of cheat sheet (short): `[PHP-MAP.md](PHP-MAP.md)`
+Day-of cheat sheet (short): [`PHP-MAP.md`](PHP-MAP.md)
 
 Your real app folder:
 
@@ -783,7 +783,7 @@ Do Section 5.6 (`/hours`) out loud while typing.
 
 ## 6.2 Day-of 10-minute checklist
 
-1. Open `[PHP-MAP.md](PHP-MAP.md)`.
+1. Open [`PHP-MAP.md`](PHP-MAP.md).
 2. Open these six files:
   - `routes/web.php`
   - `app/Http/Controllers/PageController.php`
