@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 // guest pages (no login needed)
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/hours', [PageController::class, 'hours'])->name('hours');
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/bouquets', [PageController::class, 'bouquetsIndex'])->name('bouquets.index');
 
