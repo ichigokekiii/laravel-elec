@@ -27,7 +27,6 @@
                     <a href="{{ route('bouquets.index') }}" class="{{ request()->routeIs('bouquets.*') ? 'text-accent' : 'hover:text-accent' }}">Showcase</a>
                     <a href="{{ route('services') }}" class="{{ request()->routeIs('services') ? 'text-accent' : 'hover:text-accent' }}">Services</a>
                     <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'text-accent' : 'hover:text-accent' }}">Contact</a>
-                    <a href="{{ route('hours') }}" class="{{ request()->routeIs('hours') ? 'text-accent' : 'hover:text-accent' }}">Hours</a>
                 </div>
 
                 <div class="flex items-center justify-end gap-3">
