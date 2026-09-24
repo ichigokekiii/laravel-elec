@@ -26,6 +26,12 @@
                 @if (Auth::user()->isUser())
                     <a href="{{ route('posts.submit') }}" class="inline-flex rounded-full border border-gray-200 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-700 hover:text-accent transition">Custom order</a>
                 @endif
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="inline-flex rounded-full border border-gray-200 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-700 hover:text-accent transition">
+                        Log Out
+                    </button>
+                </form>
             </div>
 
             @if (Auth::user()->isUser() && isset($recentPosts) && $recentPosts->isNotEmpty())

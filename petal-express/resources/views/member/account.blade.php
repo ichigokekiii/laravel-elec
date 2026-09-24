@@ -13,9 +13,17 @@
                     <p class="text-gray-600 font-light">
                         Is this you? if yes, proceed
                     </p>
-                    <a href="{{ route('profile.edit') }}" class="inline-flex rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white hover:bg-accent-hover transition">
-                        Go to Profile
-                    </a>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="{{ route('profile.edit') }}" class="inline-flex rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white hover:bg-accent-hover transition">
+                            Go to Profile
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="inline-flex rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 hover:text-accent transition">
+                                Log Out
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
