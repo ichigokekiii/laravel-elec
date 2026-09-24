@@ -21,6 +21,12 @@
                 <a href="{{ route('orders.index') }}" class="inline-flex rounded-full bg-gray-900 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wide border-2 border-gray-900 hover:bg-transparent hover:text-gray-900 transition">My Orders</a>
                 <a href="{{ route('favorites.index') }}" class="inline-flex rounded-full border border-gray-200 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-700 hover:text-accent transition">Favorites</a>
                 <a href="{{ route('account.edit') }}" class="inline-flex rounded-full border border-gray-200 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-700 hover:text-accent transition">Account</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="inline-flex rounded-full border border-gray-200 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-wide text-gray-700 hover:text-accent transition">
+                        Log Out
+                    </button>
+                </form>
             </div>
         </div>
     </div>
