@@ -2,47 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\View\View;
 
-// this is the controller for guest pages
+// guest pages (shop / marketing site)
 class PageController extends Controller
 {
-    // change bouquet names / prices / images here
-    private function bouquets(): array
+    // showcase items come from showcase_flowers (admin manages them)
+    private function showcaseItems()
     {
-        return [
-            1 => [
-                'id' => 1,
-                'name' => 'Sunrise Dozen',
-                'price' => '₱1,299',
-                'description' => 'Warm roses and baby’s breath for morning deliveries around Metro Manila.',
-                'image' => 'https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?q=80&w=800',
-            ],
-            2 => [
-                'id' => 2,
-                'name' => 'Petal Express Classic',
-                'price' => '₱1,899',
-                'description' => 'Our signature mixed bouquet with seasonal blooms and a handwritten note card.',
-                'image' => 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=800',
-            ],
-            3 => [
-                'id' => 3,
-                'name' => 'Quiet Garden',
-                'price' => '₱2,450',
-                'description' => 'Soft pastels and greenery for sympathy, thank-yous, and calm home corners.',
-                'image' => 'https://images.unsplash.com/photo-1563241527-3004b7be0ffd?q=80&w=800',
-            ],
-        ];
+        return Post::query()->orderBy('id')->get();
     }
 
     public function home(): View
     {
-        $bouquets = $this->bouquets();
+        $bouquets = $this->showcaseItems();
 
         return view('pages.home', [
             'tagline' => 'Fresh flowers, delivered with care.',
             'bouquets' => $bouquets,
-            'featuredCount' => count($bouquets),
+            'featuredCount' => $bouquets->count(),
         ]);
     }
 
@@ -59,21 +38,16 @@ class PageController extends Controller
     public function bouquetsIndex(): View
     {
         return view('pages.bouquets-index', [
-            'bouquets' => $this->bouquets(),
+            'bouquets' => $this->showcaseItems(),
         ]);
     }
 
-    // {id} from the URL lands here
     public function bouquetsShow(string $id): View
     {
-        $bouquets = $this->bouquets();
-
-        if (! isset($bouquets[$id])) {
-            abort(404);
-        }
+        $bouquet = Post::query()->findOrFail($id);
 
         return view('pages.bouquets-show', [
-            'bouquet' => $bouquets[$id],
+            'bouquet' => $bouquet,
         ]);
     }
 

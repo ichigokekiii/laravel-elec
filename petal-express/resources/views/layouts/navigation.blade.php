@@ -1,79 +1,69 @@
-<nav x-data="{ open: false }" class="bg-[#ffffffee] backdrop-blur-md border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex items-center gap-8">
-                <a href="{{ route('home') }}" class="text-lg font-semibold tracking-wide text-brand lowercase">
-                    petal express
-                </a>
+<nav x-data="{ open: false }" class="sticky top-0 z-40 w-full border-b border-gray-200 bg-[#ffffffee] backdrop-blur-md">
+    <div class="max-w-7xl mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 md:gap-6 md:px-8 md:py-4">
+        <a href="{{ route('home') }}" class="text-lg font-semibold tracking-wide text-brand lowercase">
+            petal express
+        </a>
 
-                {{-- themed member links (Breeze layout customization) --}}
-                <div class="hidden space-x-6 sm:flex text-sm">
-                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">Shop</x-nav-link>
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">Dashboard</x-nav-link>
-                    <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">My Orders</x-nav-link>
-                    <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.*')">Favorites</x-nav-link>
-                    <x-nav-link :href="route('account.edit')" :active="request()->routeIs('account.*')">Account</x-nav-link>
-                </div>
-            </div>
+        <div class="hidden md:flex justify-center gap-8 text-sm text-gray-700">
+            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'text-accent' : 'hover:text-accent' }}">Dashboard</a>
+            <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'text-accent' : 'hover:text-accent' }}">My Orders</a>
+            <a href="{{ route('favorites.index') }}" class="{{ request()->routeIs('favorites.*') ? 'text-accent' : 'hover:text-accent' }}">Favorites</a>
+            <a href="{{ route('account.edit') }}" class="{{ request()->routeIs('account.*') ? 'text-accent' : 'hover:text-accent' }}">Account</a>
+            @if (Auth::user()->isAdmin())
+                <a href="{{ route('admin.posts.index') }}" class="{{ request()->routeIs('admin.posts.*') ? 'text-accent' : 'hover:text-accent' }}">Showcase</a>
+            @endif
+            @if (Auth::user()->isUser())
+                <a href="{{ route('posts.submit') }}" class="{{ request()->routeIs('posts.submit*') ? 'text-accent' : 'hover:text-accent' }}">Custom order</a>
+            @endif
+        </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+        <div class="flex items-center justify-end gap-3">
+            <button type="button" class="md:hidden p-2 text-gray-700" @click="open = ! open" aria-label="Menu">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+
+            <div class="hidden sm:block">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-4 py-2 border border-gray-200 text-sm font-medium rounded-full text-gray-700 bg-white hover:text-accent focus:outline-none transition">
-                            <div>{{ Auth::user()->name }}</div>
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
+                        <button class="inline-flex items-center rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-accent focus:outline-none transition">
+                            <span>{{ Auth::user()->name }}</span>
+                            <svg class="fill-current h-4 w-4 ms-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
                         </button>
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">{{ __('Profile') }}</x-dropdown-link>
+                        <x-dropdown-link :href="route('profile.edit')">Profile</x-dropdown-link>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                Log Out
                             </x-dropdown-link>
                         </form>
                     </x-slot>
                 </x-dropdown>
             </div>
-
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-accent hover:bg-gray-50 focus:outline-none transition">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
         </div>
     </div>
 
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden border-t border-gray-100">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">Shop</x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">Dashboard</x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">My Orders</x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.*')">Favorites</x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('account.edit')" :active="request()->routeIs('account.*')">Account</x-responsive-nav-link>
-        </div>
-        <div class="pt-4 pb-1 border-t border-gray-100">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">{{ __('Profile') }}</x-responsive-nav-link>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
+    <div class="md:hidden border-t border-gray-100 divide-y divide-gray-100 bg-white" x-show="open" x-cloak>
+        <a href="{{ route('dashboard') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">Dashboard</a>
+        <a href="{{ route('orders.index') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">My Orders</a>
+        <a href="{{ route('favorites.index') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">Favorites</a>
+        <a href="{{ route('account.edit') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">Account</a>
+        @if (Auth::user()->isAdmin())
+            <a href="{{ route('admin.posts.index') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">Showcase</a>
+        @endif
+        @if (Auth::user()->isUser())
+            <a href="{{ route('posts.submit') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">Custom order</a>
+        @endif
+        <a href="{{ route('profile.edit') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">Profile</a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="block w-full text-left px-4 py-3 min-h-11 text-sm text-gray-700">Log Out</button>
+        </form>
     </div>
 </nav>

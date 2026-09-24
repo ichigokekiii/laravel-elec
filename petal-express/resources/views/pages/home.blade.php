@@ -7,7 +7,7 @@
                     title="Discover the perfect"
                     script="Flowers"
                 >
-                    <p>just for you. Fresh arrangements inspired by the same Petal Express look from our Ordering and POS site.</p>
+                    <p>Just for you! Fresh arrangements inspired by Petal Express</p>
                 </x-page-banner>
 
                 <div class="mt-8 lg:mt-0 lg:pb-6">
@@ -47,18 +47,17 @@
             <p class="text-sm font-semibold uppercase tracking-widest text-accent mb-3">Featured</p>
             <h2 class="font-playfair text-4xl md:text-5xl font-bold text-gray-900 mb-12">Blooms worth opening</h2>
 
-            {{-- same $bouquets array from PageController (not a second hardcode) --}}
             <div class="flex flex-wrap gap-8">
                 @foreach ($bouquets as $item)
                     <div class="w-full sm:max-w-[320px]">
                         <x-bouquet-card
-                            :name="$item['name']"
-                            :price="$item['price']"
-                            :href="route('bouquets.show', $item['id'])"
-                            :image="$item['image']"
+                            :name="$item->title"
+                            :price="$item->price"
+                            :href="route('bouquets.show', $item->id)"
+                            :image="$item->galleryImageUrl()"
                         >
                             <x-slot name="badge">Collection</x-slot>
-                            Handcrafted for everyday moments and same-day surprises.
+                            {{ $item->body }}
                         </x-bouquet-card>
                     </div>
                 @endforeach

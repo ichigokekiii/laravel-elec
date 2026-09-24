@@ -809,6 +809,174 @@ Do not plant any hidden AI verification comment from the assignment PDF. If you 
 
 
 
+# Part 7 — Lab Act 2 (roles, migrations, Eloquent posts)
+
+Branch: `labact2` (Lab Act 1 frozen on `labact1`).  
+Database: **SQLite file** `petal-express/database/database.sqlite` (`DB_CONNECTION=sqlite`).  
+Docs shape: same as class migrations lecture + [Laravel migrations docs](https://laravel.com/framework/docs/migrations).
+
+## 7.1 One sentence for Lab Act 2
+
+> “URL hits `web.php`, `auth` checks login, `role` middleware checks admin or user, the controller uses Eloquent on the `showcase_flowers` table in SQLite, then Blade shows the page.”
+
+## 7.2 What we built
+
+| Who | Pages | Saves to DB? |
+| --- | --- | --- |
+| Admin (`role = admin`) | Showcase manager `/admin/posts` (add / edit) | Yes. Those rows power the public Showcase tab |
+| User (`role = user`) | Bouquet detail `/posts/{post}`, Custom order `/posts/submit` | Detail reads DB. Custom order is **static** (validate + flash, no insert) |
+
+The public Showcase (`/bouquets`) and home featured cards read the same `showcase_flowers` table (Eloquent model still named `Post`). Photos come from six packed files in `public/images/bouquets/`. Bouquet id 7 reuses image 1, and so on.
+
+Demo logins (from seeder):
+
+- Admin: `admin@test.com` / `123`
+- User: `test@test.com` / `123`
+
+## 7.3 Files to open for Lab Act 2
+
+1. `routes/web.php` — `role:admin` and `role:user` groups
+2. `bootstrap/app.php` — `role` middleware alias
+3. `app/Http/Middleware/EnsureUserHasRole.php` — compares `$user->role` to the route parameter
+4. `database/migrations/*_add_role_to_users_table.php` and `*_create_showcase_flowers_table.php`
+5. `app/Models/Post.php` — `$table = 'showcase_flowers'`, `$fillable`, `SoftDeletes`, `belongsTo(User)`
+6. `app/Http/Controllers/AdminPostController.php` — lecture-style `store`
+7. `app/Http/Controllers/UserPostController.php` — show + static submit
+8. `database/seeders/DatabaseSeeder.php` — admin, user, sample showcase flowers
+
+## 7.4 Migrations (what sir taught)
+
+A migration is version control for your database tables.
+
+```bash
+cd /Users/jc/laravel-elec/petal-express
+php artisan make:model Post -m
+# fill the migration columns, THEN:
+php artisan migrate
+```
+
+We also ran `add_role_to_users_table` so every user has `role` (`admin` or `user`).
+
+`showcase_flowers` columns: `id`, `title`, `body`, `price`, nullable `image`, `user_id`, `timestamps`, `softDeletes`. The `Post` model points at this table with `protected $table = 'showcase_flowers'`.
+
+If you edit a migration that already ran:
+
+```bash
+php artisan migrate:rollback
+# fix the file
+php artisan migrate
+```
+
+## 7.5 Eloquent vs Query Builder (say this if asked)
+
+Graded path is Eloquent:
+
+- List: `Post::with('user')->latest()->get()`
+- Insert: `Post::create([...])` after `$request->validate([...])`
+- Author: `'user_id' => auth()->id()`
+
+Query Builder (`DB::table('showcase_flowers')->get()`) is optional comparison only.  
+`diffForHumans()` needs Eloquent/Carbon dates. Query Builder often returns plain strings.
+
+## 7.6 Mass assignment (`$fillable`)
+
+`Post::$fillable` lists fields `create()` / `update()` may set (`title`, `body`, `price`, `image`, `user_id`).  
+Without `$fillable` (or `$guarded`), mass assignment is blocked for safety.
+
+## 7.7 Middleware: `auth` vs `role`
+
+- `auth` — you must be logged in (session from Breeze)
+- `role:admin` / `role:user` — after login, your `users.role` must match
+
+Alias registered in `bootstrap/app.php`:
+
+```php
+$middleware->alias([
+    'role' => \App\Http\Middleware\EnsureUserHasRole::class,
+]);
+```
+
+Wrong role → HTTP 403.
+
+## 7.8 Admin `store` checklist (lecture)
+
+1. Form `method="POST"` + `@csrf` (missing CSRF = **419**)
+2. Inputs have `name="title"`, `name="body"`, …
+3. `store(Request $request)`
+4. `$request->validate([...])`
+5. `Post::create([...])` with `user_id` from `auth()->id()`
+6. Redirect to index with `->with('success', '...')`
+7. Blade shows `$errors` and `session('success')`
+
+## 7.9 Why the user suggest form does not save
+
+Same honesty pattern as Contact in Lab Act 1.  
+The brief asks for a static submit view. We validate and flash thank-you. Only admin create/edit writes rows.
+
+## 7.10 Show SQLite tables in VS Code
+
+1. Install extension **SQLite Viewer** (`qwtel.sqlite-viewer`) or **SQLite** (`alexcvzz.vscode-sqlite`)
+2. Open `petal-express/database/database.sqlite`
+3. Show `users` (column `role`) and `showcase_flowers` rows after migrate/seed
+
+Say:
+
+> “The database is one SQLite file. In VS Code I open `database.sqlite` with the SQLite extension so you can see the tables.”
+
+MySQL Workbench cannot open this file. Do not use it for this lab.
+
+Optional CLI:
+
+```bash
+cd /Users/jc/laravel-elec/petal-express
+/usr/bin/sqlite3 database/database.sqlite ".tables"
+/usr/bin/sqlite3 database/database.sqlite "SELECT id,email,role FROM users;"
+```
+
+## 7.11 Scripted Lab Act 2 answers
+
+### What is a migration?
+
+> “A PHP file that creates or changes tables. `php artisan migrate` runs new ones. Our `showcase_flowers` table and `users.role` column come from migrations.”
+
+### Where are posts stored?
+
+> “In SQLite, table `showcase_flowers`, through the `Post` model (`protected $table`). Not a hard-coded array.”
+
+### How does role middleware work?
+
+> “After `auth`, `EnsureUserHasRole` reads `auth()->user()->role` and compares it to `admin` or `user` on the route. Wrong role gets 403.”
+
+### Why soft deletes on the model?
+
+> “Lecture prepared `softDeletes()` on the table and `SoftDeletes` on the model. We are not using a delete button yet until that lesson.”
+
+### Show me create a post
+
+Login as `admin@test.com` / `123` → Showcase → Add bouquet → save → show new row in SQLite under `showcase_flowers`.
+
+### Show me role blocking
+
+Login as `test@test.com` / `123` → open `/admin/posts` → should be 403.  
+Login as admin → open `/posts/submit` → should be 403.
+
+## 7.12 Day-of Lab Act 2 checklist
+
+1. `git checkout labact2`
+2. `cd petal-express && php artisan migrate && php artisan db:seed`
+3. `php artisan serve`
+4. Open SQLite file in VS Code extension
+5. Demo admin CRUD, then user show + static form
+6. Say the Lab Act 2 one-sentence chain once out loud
+
+## 7.13 Lab 1 / Lab 2 note
+
+Schema changes live on branch `labact2`. The sqlite file is local (not in git). After migrate on Lab Act 2, Lab Act 1 code usually still runs because we only **added** columns/tables. If anything looks wrong on `labact1`, say so and use a fresh sqlite only if needed.
+
+---
+
+
+
 # Quick command cheat sheet (tear-off)
 
 ```bash
@@ -820,12 +988,17 @@ cd /Users/jc/laravel-elec/petal-express
 # run this lab site
 php artisan serve
 
-# database helpers
+# database helpers (SQLite file: database/database.sqlite)
 php artisan migrate
 php artisan db:seed
 
+# Lab Act 2 demos
+# admin@test.com / 123  → /admin/posts
+# test@test.com / 123   → /posts/1  and  /posts/submit
+
 # see URLs
 php artisan route:list
+php artisan route:list --path=posts
 
 # frontend assets (when CSS/JS tooling changed)
 npm install
