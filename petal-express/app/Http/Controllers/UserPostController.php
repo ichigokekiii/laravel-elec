@@ -11,6 +11,8 @@ class UserPostController extends Controller
 {
     public function show(Post $post): View
     {
+        $post->load(['category', 'user']);
+
         return view('posts.show', compact('post'));
     }
 
@@ -28,6 +30,6 @@ class UserPostController extends Controller
 
         return redirect()
             ->route('posts.submit')
-            ->with('status', 'Thanks! We received your custom request and will follow up soon.');
+            ->with('success', 'Thanks! We received your custom request and will follow up soon.');
     }
 }

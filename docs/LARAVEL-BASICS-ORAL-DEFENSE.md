@@ -949,7 +949,7 @@ cd /Users/jc/laravel-elec/petal-express
 
 ### Why soft deletes on the model?
 
-> “Lecture prepared `softDeletes()` on the table and `SoftDeletes` on the model. We are not using a delete button yet until that lesson.”
+> “Lab Act 2 put `softDeletes()` on the table and `SoftDeletes` on the `Post` model. Lab Act 3 uses that. Delete sets `deleted_at`. The row stays. Trash can restore it or delete it forever.”
 
 ### Show me create a post
 
@@ -975,7 +975,90 @@ Schema changes live on branch `labact2`. The sqlite file is local (not in git). 
 
 ---
 
+# Part 8 — Lab Act 3 (validation, toast, pages, categories, trash, 100 rows)
 
+Branch: `labact3`. Same SQLite file. Lab Act 2 already had the `deleted_at` column, the `SoftDeletes` trait, and `Post belongsTo User`. Lab Act 3 turns those on and adds categories.
+
+Spoken walkthrough with click-by-click lines: [`LAB-ACT-2-AND-3-RECORDING.md`](LAB-ACT-2-AND-3-RECORDING.md).
+
+## 8.1 One sentence for Lab Act 3
+
+> “The form posts to `web.php`, `PostRequest` checks the fields, the controller saves with Eloquent, the category and user relationships load the related rows, soft delete only sets `deleted_at`, and Blade shows one page of rows plus a toast.”
+
+## 8.2 What each requirement uses
+
+| Requirement | Where it lives | What to say |
+| --- | --- | --- |
+| Form handling and validation | `app/Http/Requests/PostRequest.php` | One rules list for create and edit. Missing category or a price without `₱` comes back with errors. Nothing is saved. |
+| Notification | `resources/views/components/flash.blade.php` | `->with('success', ...)` or `->with('error', ...)` is stored in the session for the next page. The toast reads it once, then it is gone. |
+| Pagination | `paginate(10)` on admin, `paginate(9)` on `/bouquets`, `take(6)` on home | `paginate` adds `LIMIT` and `OFFSET` and a page query. `links()` prints Previous and Next. Home still says the full count. |
+| Relationship | `categories` table, `Post::category()`, `Category::posts()` | A bouquet belongs to one category. A category has many bouquets. `with('category')` loads them in one extra query. The old `user()` relationship is what “Added by” uses. |
+| Soft delete, restore, delete forever | `destroy`, `trash`, `restore`, `forceDelete` on `AdminPostController` | `delete()` sets `deleted_at`. Normal queries hide that row. `onlyTrashed()` is the Trash page. `restore()` clears `deleted_at`. `forceDelete()` removes the row. |
+| Seed 100 | `PostFactory` + `DatabaseSeeder` | 5 categories, 3 named bouquets, 97 from the factory. Re-seed wipes the showcase first so the count stays 100. |
+
+## 8.3 Files to open
+
+1. `app/Http/Requests/PostRequest.php`
+2. `app/Http/Controllers/AdminPostController.php`
+3. `app/Models/Post.php` and `app/Models/Category.php`
+4. `database/migrations/2026_10_08_102010_create_categories_table.php`
+5. `database/migrations/2026_10_08_102011_add_category_id_to_showcase_flowers_table.php`
+6. `database/factories/PostFactory.php` and `database/seeders/DatabaseSeeder.php`
+7. `routes/web.php` admin group (`trash` is registered before `{post}`)
+8. `resources/views/components/flash.blade.php`
+9. `resources/views/admin/posts/trash.blade.php`
+10. `resources/views/pages/bouquets-index.blade.php`
+11. `resources/views/vendor/pagination/tailwind.blade.php`
+
+## 8.4 How a save travels
+
+1. Admin opens Add bouquet. `create()` sends every `Category` to the Blade `<select>`.
+2. The form is `POST` with `@csrf`. Each input has a `name`.
+3. The route calls `store(PostRequest $request)`. Laravel runs `PostRequest` before the method body.
+4. If a rule fails, Laravel redirects back. `$errors` fills the red text under the field. The toast says to fix the highlighted fields. `Post::create` never runs.
+5. If the rules pass, `$request->validated()` is only `title`, `body`, `price`, and `category_id`. `user_id` is `auth()->id()`, not something the form can fake.
+6. Redirect to the list with `->with('success', ...)`. The next page’s `<x-flash>` prints it.
+
+## 8.5 How delete travels
+
+1. The Delete button is a form. `POST` plus `@method('DELETE')` plus `@csrf`.
+2. `destroy()` calls `$post->delete()`. That writes `deleted_at`. The row is still in `showcase_flowers`.
+3. `/bouquets` uses a normal `Post::query()`, so the bouquet disappears by itself.
+4. Trash uses `Post::onlyTrashed()`. Restore calls `$post->restore()`. Delete forever calls `$post->forceDelete()`, and only if the bouquet is already in Trash.
+
+## 8.6 Scripted Lab Act 3 answers
+
+### What is a Form Request?
+
+> “A class that holds the rules. Create and edit both type-hint `PostRequest`, so I do not copy the rules twice. `validated()` is the only input I pass to `create` or `update`.”
+
+### Where does the toast come from?
+
+> “The controller puts a string in the session with `with('success')` or `with('error')`. The layout includes `<x-flash>`. Session flash lasts for one request.”
+
+### Why is the home page not 100 cards?
+
+> “`paginate` and `take` limit the query. Home loads 6 newest. The number on the page is `Post::count()`, which is every bouquet that is not in Trash.”
+
+### What is the relationship?
+
+> “`categories` is its own table. `showcase_flowers.category_id` points at it. `belongsTo` reads the category from a bouquet. `hasMany` reads the bouquets from a category. The chips use `withCount('posts')`.”
+
+### What is the difference between delete, restore, and delete forever?
+
+> “Delete sets `deleted_at`. Restore sets it back to null. Delete forever runs `forceDelete()` and the row is gone. Public pages never call `withTrashed()`, so Trash stays off the shop.”
+
+## 8.7 Day-of Lab Act 3 checklist
+
+1. `git checkout labact3`
+2. `cd petal-express && php artisan migrate && php artisan db:seed`
+3. `php artisan serve`
+4. Admin `admin@test.com` / `123`. Add a bouquet, leave a field empty, then save a valid one.
+5. Open `/bouquets`. Show page 2 and one category chip.
+6. Delete a bouquet, open Trash, Restore, then Delete forever on a row you can afford to lose.
+7. In SQLite, `SELECT COUNT(*) FROM showcase_flowers WHERE deleted_at IS NULL;`
+
+---
 
 # Quick command cheat sheet (tear-off)
 
@@ -995,6 +1078,12 @@ php artisan db:seed
 # Lab Act 2 demos
 # admin@test.com / 123  → /admin/posts
 # test@test.com / 123   → /posts/1  and  /posts/submit
+
+# Lab Act 3 demos (same logins, branch labact3)
+# /admin/posts          list, 10 per page, Delete
+# /admin/posts/trash    restore or delete forever
+# /bouquets             9 per page, category chips
+# /bouquets?category=1  one category only
 
 # see URLs
 php artisan route:list

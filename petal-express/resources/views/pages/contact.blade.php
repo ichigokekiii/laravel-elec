@@ -12,12 +12,6 @@
             </div>
 
             <div>
-                @if (session('status'))
-                    <div class="mb-6 rounded-[1.5rem] border border-accent/20 bg-accent-soft px-5 py-4 text-accent">
-                        {{ session('status') }}
-                    </div>
-                @endif
-
                 <div class="rounded-[2rem] border border-gray-100 bg-white p-8 shadow-sm">
                     {{-- @csrf is required on every POST form --}}
                     <form method="POST" action="{{ route('contact.store') }}" class="space-y-5">

@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<\Database\Factories\PostFactory> */
+    use HasFactory, SoftDeletes;
 
     // table name (not the default "posts")
     protected $table = 'showcase_flowers';
@@ -29,11 +31,17 @@ class Post extends Model
         'price',
         'image',
         'user_id',
+        'category_id',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     // pick one of the 6 packed images by id (cycles when id > 6)

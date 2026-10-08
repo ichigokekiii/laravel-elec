@@ -16,6 +16,7 @@
     </head>
     <body class="font-sans antialiased bg-page">
         <div class="min-h-screen bg-page">
+            <x-flash />
             @include('layouts.navigation')
 
             @isset($header)

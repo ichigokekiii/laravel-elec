@@ -9,6 +9,12 @@
                 <img src="{{ $post->galleryImageUrl() }}" alt="{{ $post->title }}" class="h-64 w-full object-cover">
                 <div class="p-8 text-gray-900 space-y-4">
                     <p class="text-xl font-semibold text-accent">{{ $post->price }}</p>
+                    <p class="text-sm text-gray-600">
+                        {{ $post->category?->name ?? 'Uncategorized' }}
+                        @if ($post->user)
+                            · Added by {{ $post->user->name }}
+                        @endif
+                    </p>
                     <p class="font-light leading-relaxed whitespace-pre-line">{{ $post->body }}</p>
                     <div class="flex flex-wrap gap-3 pt-2">
                         <a href="{{ route('bouquets.index') }}" class="inline-flex text-sm font-semibold text-accent hover:underline">Browse showcase</a>

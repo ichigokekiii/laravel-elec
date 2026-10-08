@@ -16,7 +16,7 @@
                         {{ $tagline }}
                     </p>
                     <p class="text-sm text-gray-500 mb-6">
-                        {{ $featuredCount }} featured bouquets in the showcase right now.
+                        {{ $featuredCount }} bouquets in the showcase. Six of the newest are below.
                     </p>
                     <a href="{{ route('bouquets.index') }}" class="inline-flex items-center rounded-full bg-gray-900 text-white h-14 px-8 text-sm font-semibold tracking-wide uppercase hover:bg-transparent hover:text-gray-900 border-2 border-gray-900 transition">
                         Shop Now
@@ -56,7 +56,7 @@
                             :href="route('bouquets.show', $item->id)"
                             :image="$item->galleryImageUrl()"
                         >
-                            <x-slot name="badge">Collection</x-slot>
+                            <x-slot name="badge">{{ $item->category?->name ?? 'Collection' }}</x-slot>
                             {{ $item->body }}
                         </x-bouquet-card>
                     </div>

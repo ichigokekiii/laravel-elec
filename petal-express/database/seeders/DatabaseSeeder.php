@@ -2,16 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::query()->updateOrCreate(
+        User::query()->updateOrCreate(
             ['email' => 'test@test.com'],
             [
                 'name' => 'profile',
@@ -31,25 +33,35 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // clear old sample rows then seed the real showcase set
-        Post::query()->forceDelete();
-        \Illuminate\Support\Facades\DB::statement("DELETE FROM sqlite_sequence WHERE name = 'showcase_flowers'");
+        $categoryNames = ['Birthday', 'Anniversary', 'Sympathy', 'Thank You', 'Just Because'];
+        $categories = [];
+
+        foreach ($categoryNames as $name) {
+            $categories[$name] = Category::query()->updateOrCreate(['name' => $name]);
+        }
+
+        // wipe showcase rows (including trash) so re-seed stays at 100
+        Post::withTrashed()->forceDelete();
+        DB::statement("DELETE FROM sqlite_sequence WHERE name = 'showcase_flowers'");
 
         $showcase = [
             [
                 'title' => 'Sunrise Dozen',
                 'price' => '₱1,299',
                 'body' => 'Warm roses and baby’s breath for morning deliveries around Metro Manila.',
+                'category' => 'Birthday',
             ],
             [
                 'title' => 'Petal Express Classic',
                 'price' => '₱1,899',
                 'body' => 'Our signature mixed bouquet with seasonal blooms and a handwritten note card.',
+                'category' => 'Anniversary',
             ],
             [
                 'title' => 'Quiet Garden',
                 'price' => '₱2,450',
                 'body' => 'Soft pastels and greenery for sympathy, thank-yous, and calm home corners.',
+                'category' => 'Sympathy',
             ],
         ];
 
@@ -59,10 +71,13 @@ class DatabaseSeeder extends Seeder
                 'body' => $item['body'],
                 'price' => $item['price'],
                 'user_id' => $admin->id,
+                'category_id' => $categories[$item['category']]->id,
             ]);
         }
 
-        // keep $user referenced so PHPStan-ish tools do not complain
-        unset($user);
+        // 3 named bouquets + 97 from the factory = 100
+        Post::factory()->count(97)->create([
+            'user_id' => $admin->id,
+        ]);
     }
 }

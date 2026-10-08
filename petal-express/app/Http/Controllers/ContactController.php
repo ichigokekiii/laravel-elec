@@ -19,6 +19,6 @@ class ContactController extends Controller
         // no database save for this lab. just flash a thank you
         return redirect()
             ->route('contact')
-            ->with('status', 'Thanks! We got your message and will reply soon.');
+            ->with('success', 'Thanks! We got your message and will reply soon.');
     }
 }

@@ -15,6 +15,7 @@
         <style>[x-cloak]{display:none!important}</style>
     </head>
     <body class="font-sans bg-page text-gray-900 min-h-screen flex flex-col" x-data="{ mobileOpen: false }">
+        <x-flash />
         <nav class="sticky top-0 z-40 w-full border-b border-gray-200 bg-[#ffffffee] backdrop-blur-md">
             <div class="max-w-7xl mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 md:gap-6 md:px-8 md:py-4">
                 <a href="{{ route('home') }}" class="text-lg font-semibold tracking-wide text-brand lowercase">

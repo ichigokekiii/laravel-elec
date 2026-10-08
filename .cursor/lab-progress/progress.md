@@ -1,6 +1,6 @@
 # Petal Express lab progress
 
-Last updated: 2026-09-24 (Lab Act 2 on branch `labact2`)
+Last updated: 2026-10-08 (Lab Act 3 on branch `labact3`)
 
 Workspace root: `/Users/jc/laravel-elec`  
 App folder: `petal-express/`  
@@ -25,6 +25,7 @@ Database: **SQLite** (`DB_CONNECTION=sqlite`, file `petal-express/database/datab
 | --- | --- |
 | `labact1` | Frozen Lab Act 1 demo |
 | `labact2` | Lab Act 2 work (roles, posts, migrations) |
+| `labact3` | Lab Act 3 (validation, toast, pagination, categories, trash, 100 rows) |
 | `main` | Latest when you merge |
 
 ---
@@ -35,7 +36,9 @@ Database: **SQLite** (`DB_CONNECTION=sqlite`, file `petal-express/database/datab
 
 `docs/Acuesta_John_Constantine_LabActivity1.pdf`
 
-**Lab Act 2** (in progress on `labact2`): role middleware, `posts` table, admin CRUD, user show + static submit, oral-defense Part 7.
+**Lab Act 2** (on `labact2`, still in the app on `labact3`): role middleware, `showcase_flowers` table, admin create/edit, user show + static submit.
+
+**Lab Act 3** (on `labact3`): `PostRequest`, toast, pagination, `categories` relationship, Trash (soft delete / restore / force delete), seed of 100 bouquets. Recording script: `docs/LAB-ACT-2-AND-3-RECORDING.md`. Oral defense Part 8.
 
 Oral defense guide:
 
@@ -71,6 +74,19 @@ Short map:
 | 4 | Admin CRUD + user show/static form views | Done |
 | 5 | Oral defense Part 7 + PHP-MAP + this tracker | Done |
 | 6 | Live verify migrate/seed/403/CRUD | Done |
+
+## Phase status (Lab Act 3)
+
+| Phase | What | Status |
+| --- | --- | --- |
+| 1 | `categories` + `category_id` | Done |
+| 2 | `PostFactory` and seed of 100 | Done |
+| 3 | `PostRequest` on admin create and edit | Done |
+| 4 | Trash, restore, force delete | Done |
+| 5 | Pagination on admin, Trash, Showcase. Home shows 6 | Done |
+| 6 | `<x-flash>` toast | Done |
+| 7 | Tests + live click-through | Done |
+| 8 | Oral defense Part 8 + recording script | Done |
 
 ---
 

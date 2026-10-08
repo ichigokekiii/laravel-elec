@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -54,12 +55,14 @@ class RolePostAccessTest extends TestCase
     public function test_admin_can_store_a_post(): void
     {
         $admin = User::factory()->admin()->create();
+        $category = Category::query()->create(['name' => 'Birthday']);
 
         $this->actingAs($admin)
             ->post(route('admin.posts.store'), [
                 'title' => 'New admin post',
                 'body' => 'Created through the store action.',
                 'price' => '₱1,500',
+                'category_id' => $category->id,
             ])
             ->assertRedirect(route('admin.posts.index'));
 

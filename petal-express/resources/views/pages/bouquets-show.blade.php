@@ -9,6 +9,12 @@
                 <p class="text-sm font-semibold uppercase tracking-widest text-accent mb-3">Petal Express</p>
                 <h1 class="font-playfair text-5xl md:text-6xl font-bold text-gray-900 leading-tight">{{ $bouquet->title }}</h1>
                 <p class="mt-4 text-2xl font-semibold text-accent">{{ $bouquet->price }}</p>
+                <p class="mt-3 text-sm text-gray-600">
+                    {{ $bouquet->category?->name ?? 'Uncategorized' }}
+                    @if ($bouquet->user)
+                        · Added by {{ $bouquet->user->name }}
+                    @endif
+                </p>
                 <p class="mt-6 text-base md:text-lg font-light leading-relaxed text-gray-600">{{ $bouquet->body }}</p>
 
                 <div class="mt-8 flex flex-wrap gap-3">

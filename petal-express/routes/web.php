@@ -43,8 +43,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/posts', [AdminPostController::class, 'index'])->name('posts.index');
     Route::get('/posts/create', [AdminPostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [AdminPostController::class, 'store'])->name('posts.store');
+    // trash before {post} so "trash" is not treated as an id
+    Route::get('/posts/trash', [AdminPostController::class, 'trash'])->name('posts.trash');
     Route::get('/posts/{post}/edit', [AdminPostController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/{post}', [AdminPostController::class, 'update'])->name('posts.update');
+    Route::delete('/posts/{post}', [AdminPostController::class, 'destroy'])->name('posts.destroy');
+    Route::patch('/posts/{post}/restore', [AdminPostController::class, 'restore'])
+        ->withTrashed()
+        ->name('posts.restore');
+    Route::delete('/posts/{post}/force', [AdminPostController::class, 'forceDelete'])
+        ->withTrashed()
+        ->name('posts.force');
 });
 
 // user post pages (must be logged in AND role = user)
