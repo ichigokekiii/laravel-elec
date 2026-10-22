@@ -13,7 +13,7 @@ class PageController extends Controller
     public function home(): View
     {
         // six newest cards. the count is every bouquet still in the showcase
-        $bouquets = Post::query()->with('category')->latest()->take(6)->get();
+        $bouquets = Post::query()->with('category')->orderByDesc('id')->take(6)->get();
 
         return view('pages.home', [
             'tagline' => 'Fresh flowers, delivered with care.',
@@ -41,7 +41,7 @@ class PageController extends Controller
             ->when($request->filled('category'), function ($query) use ($request) {
                 $query->where('category_id', $request->integer('category'));
             })
-            ->orderBy('id')
+            ->orderByDesc('id')
             ->paginate(9)
             ->withQueryString();
 

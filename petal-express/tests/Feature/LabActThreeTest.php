@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class LabActThreeTest extends TestCase
@@ -21,7 +22,8 @@ class LabActThreeTest extends TestCase
             ->post(route('admin.posts.store'), [
                 'title' => 'No category bouquet',
                 'body' => 'Missing the category.',
-                'price' => '₱900',
+                'price' => '900',
+                'image' => UploadedFile::fake()->image('bouquet.jpg'),
             ])
             ->assertRedirect(route('admin.posts.create'))
             ->assertSessionHasErrors('category_id');
@@ -107,14 +109,14 @@ class LabActThreeTest extends TestCase
 
         $this->get(route('bouquets.index'))
             ->assertOk()
-            ->assertSee('Paged bouquet 01')
-            ->assertSee('Paged bouquet 09')
-            ->assertDontSee('Paged bouquet 10');
+            ->assertSee('Paged bouquet 10')
+            ->assertSee('Paged bouquet 02')
+            ->assertDontSee('Paged bouquet 01');
 
         $this->get(route('bouquets.index', ['page' => 2]))
             ->assertOk()
-            ->assertSee('Paged bouquet 10')
-            ->assertDontSee('Paged bouquet 01');
+            ->assertSee('Paged bouquet 01')
+            ->assertDontSee('Paged bouquet 10');
     }
 
     public function test_category_filter_shows_only_that_category(): void

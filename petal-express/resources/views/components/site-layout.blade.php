@@ -36,8 +36,8 @@
                     </button>
 
                     @auth
-                        <a href="{{ route('dashboard') }}" class="hidden sm:inline-flex rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-accent">
-                            Dashboard
+                        <a href="{{ route('orders.index') }}" class="hidden sm:inline-flex min-h-11 items-center rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-accent">
+                            My account
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="rounded-full border border-gray-200 px-4 py-2 md:px-6 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-accent">

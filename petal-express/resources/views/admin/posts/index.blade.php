@@ -1,57 +1,80 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between gap-4">
-            <h2 class="font-playfair font-bold text-2xl text-gray-900 leading-tight">Showcase</h2>
-            <div class="flex items-center gap-3">
-                <a href="{{ route('admin.posts.trash') }}" class="inline-flex shrink-0 rounded-full border border-gray-200 bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wide text-gray-700 hover:text-accent transition">
-                    Trash ({{ $trashedCount }})
-                </a>
-                <a
-                    href="{{ route('admin.posts.create') }}"
-                    class="inline-flex shrink-0 rounded-full bg-gray-900 text-white px-6 py-3 text-xs font-semibold uppercase tracking-wide border-2 border-gray-900 hover:bg-transparent hover:text-gray-900 transition"
-                >
-                    Add bouquet
-                </a>
-            </div>
-        </div>
+<x-admin-page title="Showcase">
+    <x-slot name="actions">
+        <a
+            href="{{ route('admin.posts.trash') }}"
+            class="inline-flex min-h-11 items-center rounded-lg border border-gray-200 bg-white px-4 text-xs font-semibold uppercase tracking-wide text-gray-700 transition hover:border-accent/40 hover:text-accent"
+        >
+            Trash ({{ $trashedCount }})
+        </a>
+        <a
+            href="{{ route('admin.posts.create') }}"
+            class="inline-flex min-h-11 items-center rounded-lg bg-gray-900 px-5 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-accent active:scale-[0.98]"
+        >
+            Add bouquet
+        </a>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-[2rem] border border-gray-100">
-                <div class="p-6 sm:p-8 text-gray-900 space-y-3">
-                    @forelse ($posts as $post)
-                        <div class="rounded-[1.5rem] border border-gray-100 px-4 py-3 sm:px-5 flex flex-wrap items-center justify-between gap-3">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <img src="{{ $post->galleryImageUrl() }}" alt="" class="h-12 w-12 rounded-xl object-cover shrink-0">
-                                <div class="min-w-0">
-                                    <p class="font-playfair text-base sm:text-lg font-semibold truncate">{{ $post->title }}</p>
-                                    <p class="text-sm text-accent font-semibold">{{ $post->price }}</p>
-                                    <p class="text-sm text-gray-600">
-                                        {{ $post->category?->name ?? 'No category' }}
-                                        @if ($post->user)
-                                            · Added by {{ $post->user->name }}
-                                        @endif
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4 shrink-0">
-                                <a href="{{ route('bouquets.show', $post) }}" class="inline-flex items-center h-8 text-xs font-semibold uppercase tracking-wide text-gray-600 hover:text-accent">View</a>
-                                <a href="{{ route('admin.posts.edit', $post) }}" class="inline-flex items-center h-8 text-xs font-semibold uppercase tracking-wide text-accent hover:underline">Edit</a>
-                                <form method="POST" action="{{ route('admin.posts.destroy', $post) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center h-8 text-xs font-semibold uppercase tracking-wide text-red-700 hover:underline">Delete</button>
-                                </form>
-                            </div>
-                        </div>
-                    @empty
-                        <p class="text-gray-600">No bouquets in the showcase yet.</p>
-                    @endforelse
-                </div>
+    <x-admin-photo-preview-shell>
+        <div class="space-y-4">
+            <p class="mx-auto max-w-3xl text-center text-sm text-gray-600 sm:text-left">
+                Manage showcase bouquets, photos, and pricing. Newest items appear first.
+            </p>
+
+            <div class="overflow-hidden rounded-xl border border-gray-200 bg-white">
+                <table class="min-w-full text-left text-sm">
+                    <thead class="border-b border-gray-200 bg-page text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <tr>
+                            <th class="px-4 py-3 font-semibold sm:px-6" scope="col">Bouquet</th>
+                            <th class="hidden md:table-cell px-4 py-3 font-semibold" scope="col">Category</th>
+                            <th class="px-4 py-3 font-semibold sm:px-6" scope="col">Price</th>
+                            <th class="px-4 py-3 font-semibold text-right sm:px-6" scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse ($posts as $post)
+                            <tr class="transition hover:bg-page/60">
+                                <td class="px-4 py-4 sm:px-6">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <x-admin-photo-thumb :src="$post->displayImageUrl()" :title="$post->title" />
+                                        <div class="min-w-0">
+                                            <p class="font-medium text-gray-900 truncate">{{ $post->title }}</p>
+                                            <p class="mt-0.5 text-xs text-gray-500 md:hidden">{{ $post->category?->name ?? 'No category' }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="hidden md:table-cell px-4 py-4 text-gray-600">
+                                    {{ $post->category?->name ?? '—' }}
+                                </td>
+                                <td class="px-4 py-4 font-semibold text-accent sm:px-6 whitespace-nowrap">
+                                    {{ $post->price }}
+                                </td>
+                                <td class="px-4 py-4 sm:px-6">
+                                    <div class="flex flex-wrap items-center justify-end gap-3 text-xs font-semibold uppercase tracking-wide">
+                                        <a href="{{ route('bouquets.show', $post) }}" class="text-gray-600 hover:text-accent">View</a>
+                                        <a href="{{ route('admin.posts.edit', $post) }}" class="text-accent hover:underline">Edit</a>
+                                        <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-700 hover:underline">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-12 text-left text-gray-600">
+                                    No bouquets yet.
+                                    <a href="{{ route('admin.posts.create') }}" class="ml-1 font-semibold text-accent hover:underline">Add the first one</a>.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
-            {{ $posts->links() }}
+            <div class="pt-2">
+                {{ $posts->links() }}
+            </div>
         </div>
-    </div>
-</x-app-layout>
+    </x-admin-photo-preview-shell>
+</x-admin-page>

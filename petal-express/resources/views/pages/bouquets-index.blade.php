@@ -40,7 +40,7 @@
                     :name="$bouquet->title"
                     :price="$bouquet->price"
                     :href="route('bouquets.show', $bouquet->id)"
-                    :image="$bouquet->galleryImageUrl()"
+                    :image="$bouquet->displayImageUrl()"
                 >
                     <x-slot name="badge">{{ $bouquet->category?->name ?? 'Collection' }}</x-slot>
                     {{ $bouquet->body }}

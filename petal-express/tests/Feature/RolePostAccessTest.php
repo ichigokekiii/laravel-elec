@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class RolePostAccessTest extends TestCase
@@ -61,8 +62,9 @@ class RolePostAccessTest extends TestCase
             ->post(route('admin.posts.store'), [
                 'title' => 'New admin post',
                 'body' => 'Created through the store action.',
-                'price' => '₱1,500',
+                'price' => '1500',
                 'category_id' => $category->id,
+                'image' => UploadedFile::fake()->image('bouquet.jpg'),
             ])
             ->assertRedirect(route('admin.posts.index'));
 

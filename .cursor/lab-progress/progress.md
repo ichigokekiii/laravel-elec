@@ -1,6 +1,6 @@
 # Petal Express lab progress
 
-Last updated: 2026-10-08 (Lab Act 3 on branch `labact3`)
+Last updated: 2026-10-22 (Lab Act 4 Intervention on branch `labact4`)
 
 Workspace root: `/Users/jc/laravel-elec`  
 App folder: `petal-express/`  
@@ -26,6 +26,7 @@ Database: **SQLite** (`DB_CONNECTION=sqlite`, file `petal-express/database/datab
 | `labact1` | Frozen Lab Act 1 demo |
 | `labact2` | Lab Act 2 work (roles, posts, migrations) |
 | `labact3` | Lab Act 3 (validation, toast, pagination, categories, trash, 100 rows) |
+| `labact4` | Lab Act 4 (Intervention Image, upload, watermark WebP, file cleanup on force delete) |
 | `main` | Latest when you merge |
 
 ---
@@ -39,6 +40,8 @@ Database: **SQLite** (`DB_CONNECTION=sqlite`, file `petal-express/database/datab
 **Lab Act 2** (on `labact2`, still in the app on `labact3`): role middleware, `showcase_flowers` table, admin create/edit, user show + static submit.
 
 **Lab Act 3** (on `labact3`): `PostRequest`, toast, pagination, `categories` relationship, Trash (soft delete / restore / force delete), seed of 100 bouquets. Recording script: `docs/LAB-ACT-2-AND-3-RECORDING.md`. Oral defense Part 8.
+
+**Lab Act 4** (on `labact4`): `intervention/image-laravel` v4, admin photo upload, resize + `public/images/watermark.png` overlay, WebP in `storage/app/public/products`, `Post::displayImageUrl()`, force delete removes file. Demo: `docs/LAB-ACT-4-DEMO.md`.
 
 Oral defense guide:
 
@@ -88,6 +91,15 @@ Short map:
 | 7 | Tests + live click-through | Done |
 | 8 | Oral defense Part 8 + recording script | Done |
 
+## Phase status (Lab Act 4)
+
+| Phase | What | Status |
+| --- | --- | --- |
+| 1 | `composer require intervention/image-laravel`, `storage:link` | Done |
+| 2 | `watermark.png` + `saveWatermarkedImage()` on `AdminPostController` | Done |
+| 3 | `PostRequest` image rules + admin/guest Blade uploads & thumbnails | Done |
+| 4 | `LabActFourInterventionTest` + demo doc | Done |
+
 ---
 
 ## How to run the app
@@ -95,6 +107,7 @@ Short map:
 ```bash
 cd /Users/jc/laravel-elec/petal-express
 php artisan migrate
+php artisan storage:link
 php artisan db:seed
 php artisan serve
 ```

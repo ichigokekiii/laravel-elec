@@ -4,8 +4,7 @@
             petal express
         </a>
 
-        <div class="hidden md:flex justify-center gap-8 text-sm text-gray-700">
-            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'text-accent' : 'hover:text-accent' }}">Dashboard</a>
+        <div class="hidden md:flex justify-start gap-6 lg:gap-8 text-sm text-gray-700 md:pl-2">
             <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'text-accent' : 'hover:text-accent' }}">My Orders</a>
             <a href="{{ route('favorites.index') }}" class="{{ request()->routeIs('favorites.*') ? 'text-accent' : 'hover:text-accent' }}">Favorites</a>
             <a href="{{ route('account.edit') }}" class="{{ request()->routeIs('account.*') ? 'text-accent' : 'hover:text-accent' }}">Account</a>
@@ -50,7 +49,6 @@
     </div>
 
     <div class="md:hidden border-t border-gray-100 divide-y divide-gray-100 bg-white" x-show="open" x-cloak>
-        <a href="{{ route('dashboard') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">Dashboard</a>
         <a href="{{ route('orders.index') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">My Orders</a>
         <a href="{{ route('favorites.index') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">Favorites</a>
         <a href="{{ route('account.edit') }}" class="block px-4 py-3 min-h-11 text-sm text-gray-700">Account</a>

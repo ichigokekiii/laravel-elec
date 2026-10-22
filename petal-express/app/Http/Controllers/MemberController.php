@@ -2,34 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\View\View;
 
-// this is the controller for logged-in member pages
+// logged-in member pages (orders are placeholder until checkout exists)
 class MemberController extends Controller
 {
     public function orders(): View
     {
-        // fake orders hehehe
-        $orders = [
-            ['code' => 'PE-1042', 'status' => 'Out for delivery', 'total' => '₱1,899'],
-            ['code' => 'PE-1038', 'status' => 'Delivered', 'total' => '₱1,299'],
-        ];
-
-        return view('member.orders', [
-            'orders' => $orders,
-        ]);
+        return view('member.orders');
     }
 
     public function favorites(): View
     {
-        // change favorite names here
-        $favorites = [
-            'Sunrise Dozen',
-            'Petal Express Classic',
-        ];
+        $bouquets = Post::query()
+            ->with('category')
+            ->orderByDesc('id')
+            ->take(6)
+            ->get();
 
         return view('member.favorites', [
-            'favorites' => $favorites,
+            'bouquets' => $bouquets,
         ]);
     }
 

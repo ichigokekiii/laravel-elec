@@ -2,7 +2,7 @@
     <section class="bg-page pt-24 md:pt-28 pb-24 px-6 md:px-12">
         <div class="max-w-content mx-auto grid gap-10 lg:grid-cols-2 lg:items-center">
             <div class="overflow-hidden rounded-[2.5rem] border border-gray-100">
-                <img src="{{ $bouquet->galleryImageUrl() }}" alt="{{ $bouquet->title }}" class="h-full w-full object-cover min-h-[420px]">
+                <img src="{{ $bouquet->displayImageUrl() }}" alt="{{ $bouquet->title }}" class="h-full w-full object-cover min-h-[420px]">
             </div>
 
             <div>

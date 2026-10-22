@@ -20,12 +20,13 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // auth only (not verified). drop verified so demo login just works
+// old dashboard URL — send members to orders, admins to showcase
 Route::get('/dashboard', function () {
-    $recentPosts = auth()->user()->isUser()
-        ? \App\Models\Post::with('user')->latest()->take(5)->get()
-        : collect();
+    if (auth()->user()->isAdmin()) {
+        return redirect()->route('admin.posts.index');
+    }
 
-    return view('dashboard', compact('recentPosts'));
+    return redirect()->route('orders.index');
 })->middleware(['auth'])->name('dashboard');
 
 // protected member pages. guests get sent to login

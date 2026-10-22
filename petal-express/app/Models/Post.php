@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Post extends Model
 {
@@ -42,6 +43,27 @@ class Post extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    // for admin forms: show digits only, not the stored ₱ string
+    public function priceForInput(): string
+    {
+        $digits = preg_replace('/\D/', '', (string) $this->price);
+
+        return $digits !== '' ? $digits : '';
+    }
+
+    // uploaded webp in storage, or the packed gallery when image is empty
+    public function displayImageUrl(): string
+    {
+        if ($this->image) {
+            // relative path so images work on 127.0.0.1:8000 even when APP_URL is http://localhost
+            if (Storage::disk('public')->exists($this->image)) {
+                return '/storage/'.ltrim($this->image, '/');
+            }
+        }
+
+        return $this->galleryImageUrl();
     }
 
     // pick one of the 6 packed images by id (cycles when id > 6)
