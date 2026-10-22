@@ -3,7 +3,7 @@
 ])
 
 @php
-    $shell = 'max-w-screen-2xl';
+    $shell = 'max-w-4xl';
 @endphp
 
 <x-app-layout :shell="$shell">
@@ -18,8 +18,8 @@
         </div>
     </x-slot>
 
-    <div class="px-4 py-8 sm:px-6 lg:px-8">
-        <div class="{{ $shell }} mx-auto w-full">
+    <div class="px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <div class="{{ $shell }} mx-auto w-full space-y-8">
             {{ $slot }}
         </div>
     </div>

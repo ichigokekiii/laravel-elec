@@ -39,9 +39,11 @@ Database: **SQLite** (`DB_CONNECTION=sqlite`, file `petal-express/database/datab
 
 **Lab Act 2** (on `labact2`, still in the app on `labact3`): role middleware, `showcase_flowers` table, admin create/edit, user show + static submit.
 
-**Lab Act 3** (on `labact3`): `PostRequest`, toast, pagination, `categories` relationship, Trash (soft delete / restore / force delete), seed of 100 bouquets. Recording script: `docs/LAB-ACT-2-AND-3-RECORDING.md`. Oral defense Part 8.
+**Lab Act 3** (on `labact3`): `PostRequest`, toast, pagination, `categories` relationship, Trash (soft delete / restore / force delete), seed of 100 bouquets. Recording script: `docs/LAB-ACT-2-AND-3-RECORDING.md`. Submit PDF (Lab 2 + 3, same style as Act 1): `docs/Acuesta_John_Constantine_LabActivity2_and_3.pdf`. Oral defense Part 8.
 
 **Lab Act 4** (on `labact4`): `intervention/image-laravel` v4, admin photo upload, resize + `public/images/watermark.png` overlay, WebP in `storage/app/public/products`, `Post::displayImageUrl()`, force delete removes file. Demo: `docs/LAB-ACT-4-DEMO.md`.
+
+**Finals Lab Act 1** progress PDF (same pipeline as Lab 2+3): `docs/Acuesta_John_Constantine_Finals_LabActivity1.pdf`. Rebuild with `make-terminal-shots-finals-lab1.py`, `capture-progress-finals-lab1.cjs` (server on :8000), `build-progress-pdf-finals-lab1.py`. Shots in `docs/progress-shots-finals-lab1/`.
 
 Oral defense guide:
 
@@ -177,3 +179,21 @@ python3 build-progress-pdf.py
 Output file:
 
 `docs/Acuesta_John_Constantine_LabActivity1.pdf`
+
+## Rebuild Lab Act 2 + 3 PDF (if needed)
+
+```bash
+cd /Users/jc/laravel-elec/petal-express
+php artisan migrate
+php artisan db:seed
+php artisan serve
+# in another terminal:
+cd /Users/jc/laravel-elec/docs
+python3 make-terminal-shots-lab23.py
+node capture-progress-lab23.cjs
+python3 build-progress-pdf-lab23.py
+```
+
+Output file:
+
+`docs/Acuesta_John_Constantine_LabActivity2_and_3.pdf`

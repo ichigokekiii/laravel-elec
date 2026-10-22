@@ -1,6 +1,6 @@
 <x-admin-page title="Add bouquet">
     <x-admin-form-panel>
-        <form method="POST" action="{{ route('admin.posts.store') }}" enctype="multipart/form-data" class="space-y-5">
+        <form method="POST" action="{{ route('admin.posts.store') }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div>
@@ -44,8 +44,8 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-3 pt-2">
-                <x-primary-button>Save bouquet</x-primary-button>
-                <a href="{{ route('admin.posts.index') }}" class="text-sm text-gray-600 hover:text-accent">Cancel</a>
+                <x-primary-button class="min-h-11">Save bouquet</x-primary-button>
+                <a href="{{ route('admin.posts.index') }}" class="inline-flex min-h-11 items-center text-sm text-gray-600 hover:text-accent">Cancel</a>
             </div>
         </form>
     </x-admin-form-panel>

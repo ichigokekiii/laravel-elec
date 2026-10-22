@@ -1,10 +1,12 @@
 <nav x-data="{ open: false }" class="sticky top-0 z-40 w-full border-b border-gray-200 bg-[#ffffffee] backdrop-blur-md">
-    <div class="max-w-7xl mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 md:gap-6 md:px-8 md:py-4">
-        <a href="{{ route('home') }}" class="text-lg font-semibold tracking-wide text-brand lowercase">
-            petal express
-        </a>
+    <div class="max-w-7xl mx-auto flex items-center gap-3 px-4 py-3 md:gap-6 md:px-8 md:py-4">
+        <div class="flex flex-1 items-center justify-start min-w-0">
+            <a href="{{ route('home') }}" class="text-lg font-semibold tracking-wide text-brand lowercase shrink-0">
+                petal express
+            </a>
+        </div>
 
-        <div class="hidden md:flex justify-start gap-6 lg:gap-8 text-sm text-gray-700 md:pl-2">
+        <div class="hidden md:flex flex-1 justify-center gap-6 lg:gap-8 text-sm text-gray-700">
             <a href="{{ route('orders.index') }}" class="{{ request()->routeIs('orders.*') ? 'text-accent' : 'hover:text-accent' }}">My Orders</a>
             <a href="{{ route('favorites.index') }}" class="{{ request()->routeIs('favorites.*') ? 'text-accent' : 'hover:text-accent' }}">Favorites</a>
             <a href="{{ route('account.edit') }}" class="{{ request()->routeIs('account.*') ? 'text-accent' : 'hover:text-accent' }}">Account</a>
@@ -16,7 +18,7 @@
             @endif
         </div>
 
-        <div class="flex items-center justify-end gap-3">
+        <div class="flex flex-1 items-center justify-end gap-3 min-w-0">
             <button type="button" class="md:hidden p-2 text-gray-700" @click="open = ! open" aria-label="Menu">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>

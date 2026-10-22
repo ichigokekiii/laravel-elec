@@ -1,29 +1,26 @@
-<x-app-layout>
+<x-app-layout shell="max-w-4xl">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-playfair text-2xl font-bold text-gray-900 tracking-tight sm:text-3xl">
             {{ __('Profile') }}
         </h2>
+        <p class="mt-3 text-center text-sm text-gray-600 sm:text-left">
+            Update your name, email, and password for your Petal Express account.
+        </p>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+    <div class="px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <div class="max-w-4xl mx-auto w-full space-y-8">
+            <x-admin-form-panel>
+                @include('profile.partials.update-profile-information-form')
+            </x-admin-form-panel>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+            <x-admin-form-panel>
+                @include('profile.partials.update-password-form')
+            </x-admin-form-panel>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.logout-form')
-                </div>
-            </div>
+            <x-admin-form-panel>
+                @include('profile.partials.logout-form')
+            </x-admin-form-panel>
         </div>
     </div>
 </x-app-layout>

@@ -3,18 +3,24 @@
     'intro' => null,
 ])
 
-<x-app-layout>
+@php
+    $shell = 'max-w-4xl';
+@endphp
+
+<x-app-layout :shell="$shell">
     <x-slot name="header">
-        <div class="max-w-3xl text-left">
-            <h2 class="font-playfair text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight">{{ $heading }}</h2>
+        <div class="{{ $shell }} w-full">
+            <h2 class="font-playfair text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ $heading }}</h2>
             @if ($intro)
-                <p class="mt-2 text-sm sm:text-base text-gray-600 leading-relaxed max-w-[65ch]">{{ $intro }}</p>
+                <p class="mt-3 text-center text-sm text-gray-600 leading-relaxed sm:text-left sm:text-base max-w-[65ch]">
+                    {{ $intro }}
+                </p>
             @endif
         </div>
     </x-slot>
 
-    <div class="px-4 py-8 sm:px-6 lg:px-8">
-        <div class="max-w-3xl">
+    <div class="px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <div class="{{ $shell }} mx-auto w-full space-y-8">
             {{ $slot }}
         </div>
     </div>

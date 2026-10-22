@@ -47,21 +47,18 @@
             <p class="text-sm font-semibold uppercase tracking-widest text-accent mb-3">Featured</p>
             <h2 class="font-playfair text-4xl md:text-5xl font-bold text-gray-900 mb-12">Blooms worth opening</h2>
 
-            <div class="flex flex-wrap gap-8">
+            <ul class="max-w-4xl space-y-6 sm:space-y-8">
                 @foreach ($bouquets as $item)
-                    <div class="w-full sm:max-w-[320px]">
-                        <x-bouquet-card
-                            :name="$item->title"
-                            :price="$item->price"
-                            :href="route('bouquets.show', $item->id)"
-                            :image="$item->displayImageUrl()"
-                        >
-                            <x-slot name="badge">{{ $item->category?->name ?? 'Collection' }}</x-slot>
-                            {{ $item->body }}
-                        </x-bouquet-card>
-                    </div>
+                    <x-showcase-list-item
+                        :href="route('bouquets.show', $item->id)"
+                        :title="$item->title"
+                        :image="$item->displayImageUrl()"
+                    >
+                        <x-slot name="meta">{{ $item->category?->name ?? 'Collection' }}</x-slot>
+                        <x-slot name="subline">{{ $item->price }}</x-slot>
+                    </x-showcase-list-item>
                 @endforeach
-            </div>
+            </ul>
         </div>
     </section>
 </x-site-layout>
