@@ -1,6 +1,8 @@
 # Lab Act 4 demo checklist (Intervention + CRUD)
 
-App path: `petal-express/`. Bouquets = instructor “products.”
+The presentation copy is `docs/FINALS-LAB-ACT-1-DEMO-SCRIPT.md`. The code walk-through is `docs/FINALS-LAB-ACT-1-CODE.md`. This page is the short checklist.
+
+App path: `petal-express/`. Bouquets are the instructor products.
 
 ## Before you record
 
