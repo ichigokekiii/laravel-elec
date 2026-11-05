@@ -5,10 +5,10 @@
 ])
 
 <li>
-    <article {{ $attributes->merge(['class' => 'flex w-full items-center gap-6 rounded-2xl border border-gray-200 bg-white p-6 transition hover:border-accent/20 sm:gap-10 sm:p-8']) }}>
+    <article {{ $attributes->merge(['class' => 'flex w-full flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 transition hover:border-accent/30 sm:flex-row sm:items-center sm:gap-5 sm:p-5']) }}>
         <x-admin-photo-thumb :src="$image" :title="$imageTitle !== '' ? $imageTitle : $title" />
 
-        <div class="min-w-0 flex-1 flex flex-col justify-center gap-1.5 sm:gap-2">
+        <div class="min-w-0 flex-1 flex flex-col justify-center gap-0.5">
             @isset($meta)
                 <p class="text-xs font-medium uppercase tracking-wide text-gray-500">
                     {{ $meta }}
@@ -32,7 +32,7 @@
             @endisset
         </div>
 
-        <div class="ml-auto flex shrink-0 flex-col items-end justify-center gap-2 self-center pl-6 sm:flex-row sm:items-center sm:gap-4 sm:pl-8">
+        <div class="flex shrink-0 flex-wrap items-center gap-1 sm:justify-end">
             {{ $actions }}
         </div>
     </article>

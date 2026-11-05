@@ -3,15 +3,15 @@
 ])
 
 @php
-    $shell = 'max-w-4xl';
+    $shell = 'max-w-6xl';
 @endphp
 
 <x-app-layout :shell="$shell">
     <x-slot name="header">
-        <div class="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-            <h2 class="font-playfair text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ $title }}</h2>
+        <div class="flex w-full flex-col items-start gap-3 text-left sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-left font-playfair text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ $title }}</h2>
             @isset($actions)
-                <div class="flex flex-wrap items-center gap-2 sm:justify-end">
+                <div class="flex flex-wrap items-center justify-start gap-2 sm:justify-end">
                     {{ $actions }}
                 </div>
             @endisset

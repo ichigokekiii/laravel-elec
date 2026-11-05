@@ -1,66 +1,46 @@
-<x-admin-page title="Trash">
-    <x-slot name="actions">
-        <a
-            href="{{ route('admin.posts.index') }}"
-            class="inline-flex min-h-11 items-center text-sm font-medium text-gray-600 hover:text-accent"
-        >
-            Back to showcase
-        </a>
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <h2 class="font-playfair font-bold text-2xl text-gray-900 leading-tight">Trash</h2>
+            <a href="{{ route('admin.posts.index') }}" class="inline-flex min-h-11 items-center text-sm text-gray-600 hover:text-accent">Back to showcase</a>
+        </div>
     </x-slot>
 
-    <x-admin-photo-preview-shell>
-        <div class="space-y-8">
-            <p class="text-center text-sm text-gray-600 sm:text-left">
-                Soft-deleted bouquets. Restore or remove them permanently.
-            </p>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <x-admin-photo-preview-shell>
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-[2rem] border border-gray-100">
+                    <div class="p-6 sm:p-8 text-gray-900 space-y-3">
+                        @forelse ($posts as $post)
+                            <div class="rounded-[1.5rem] border border-gray-100 px-4 py-3 sm:px-5 flex flex-wrap items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <x-admin-photo-thumb :src="$post->displayImageUrl()" :title="$post->title" />
+                                    <div class="min-w-0">
+                                        <p class="font-playfair text-base sm:text-lg font-semibold truncate">{{ $post->title }}</p>
+                                        <p class="text-sm text-gray-600">Deleted {{ $post->deleted_at->diffForHumans() }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-4 shrink-0">
+                                    <form method="POST" action="{{ route('admin.posts.restore', $post) }}">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="inline-flex items-center min-h-11 text-xs font-semibold uppercase tracking-wide text-accent hover:underline">Restore</button>
+                                    </form>
+                                    <form method="POST" action="{{ route('admin.posts.force', $post) }}" onsubmit="return confirm('Delete this bouquet forever? This cannot be undone.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="inline-flex items-center min-h-11 text-xs font-semibold uppercase tracking-wide text-red-700 hover:underline">Delete forever</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-gray-600">Trash is empty.</p>
+                        @endforelse
+                    </div>
+                </div>
+            </x-admin-photo-preview-shell>
 
-            <ul class="space-y-6 sm:space-y-8">
-                @forelse ($posts as $post)
-                    <x-admin-post-list-item
-                        :title="$post->title"
-                        :image="$post->displayImageUrl()"
-                        :image-title="$post->title"
-                    >
-                        <x-slot name="note">Deleted {{ $post->deleted_at->diffForHumans() }}</x-slot>
-
-                        <x-slot name="actions">
-                            <form method="POST" action="{{ route('admin.posts.restore', $post) }}" class="inline-flex">
-                                @csrf
-                                @method('PATCH')
-                                <button
-                                    type="submit"
-                                    class="inline-flex min-h-11 items-center text-xs font-semibold uppercase tracking-wide text-accent hover:underline"
-                                >
-                                    Restore
-                                </button>
-                            </form>
-                            <form
-                                method="POST"
-                                action="{{ route('admin.posts.force', $post) }}"
-                                class="inline-flex"
-                                onsubmit="return confirm('Delete this bouquet forever? This cannot be undone.')"
-                            >
-                                @csrf
-                                @method('DELETE')
-                                <button
-                                    type="submit"
-                                    class="inline-flex min-h-11 items-center text-xs font-semibold uppercase tracking-wide text-red-700 hover:underline"
-                                >
-                                    Delete forever
-                                </button>
-                            </form>
-                        </x-slot>
-                    </x-admin-post-list-item>
-                @empty
-                    <li class="rounded-2xl border border-dashed border-gray-200 bg-white px-8 py-14 text-center text-gray-600">
-                        Trash is empty.
-                    </li>
-                @endforelse
-            </ul>
-
-            <div class="pt-2">
-                {{ $posts->links() }}
-            </div>
+            {{ $posts->links() }}
         </div>
-    </x-admin-photo-preview-shell>
-</x-admin-page>
+    </div>
+</x-app-layout>

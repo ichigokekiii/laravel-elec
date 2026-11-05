@@ -136,16 +136,78 @@ Storage::disk('public')->put($path, (string) $encoded);
 
 The original upload is discarded. PHP's temp upload is removed at the end of the request. We never call `store()` on the `UploadedFile`, which would have saved the original JPG.
 
-### 6. The page finds the file again
+### 6. The lines that display the image
 
-`Post::displayImageUrl()` in `app/Models/Post.php` does this.
+Saving the file does not put it on the page. A Blade `<img>` tag does. The `src` has to be a URL the browser can request. That URL is built in one place, `Post::displayImageUrl()`, then passed into the tag.
 
-- If `image` is empty, or the file is missing on the public disk, return a packed JPG from `public/images/bouquets/01.jpg` through `06.jpg`. Those six files are not watermarked. Seeded rows use them.
-- If the file exists, return `/storage/` plus the stored path.
+`app/Models/Post.php` lines 57 to 63:
 
-The method does not call `Storage::url()`. That helper prefixes `APP_URL`. A demo opened at `http://127.0.0.1:8000` would point at `http://localhost` and the image would break. A root-relative `/storage/...` URL follows whatever host you actually opened.
+```php
+public function displayImageUrl(): string
+{
+    if ($this->image) {
+        if (Storage::disk('public')->exists($this->image)) {
+            return '/storage/'.ltrim($this->image, '/');
+        }
+    }
 
-Every Blade screen that shows a bouquet photo calls `displayImageUrl()`. The admin list, the edit thumb, trash, the public list, the detail page, home, and favorites all share that one method. None of them call Intervention.
+    return $this->galleryImageUrl();
+}
+```
+
+Line 59 checks that the column is not empty. Line 61 checks that the WebP is really on the public disk. Line 62 is the line that displays an upload. For bouquet 107 it returns `/storage/products/0f95b48d-2d8d-4a6e-8406-0aa6522e34ec.webp`.
+
+We do not call `Storage::url()`. That helper sticks `APP_URL` on the front. If `APP_URL` is `http://localhost` and you opened `http://127.0.0.1:8000`, the image request goes to the wrong host. A path that starts with `/storage/` uses whatever host is already in the address bar.
+
+Line 66 runs only when there is no upload. `galleryImageUrl()` at line 70 picks `public/images/bouquets/01.jpg` through `06.jpg` from the row id. Those JPGs are not watermarked.
+
+The controller does not echo HTML. It loads the row and hands it to Blade.
+
+`app/Http/Controllers/PageController.php` lines 57 to 61:
+
+```php
+$bouquet = Post::query()->with(['category', 'user'])->findOrFail($id);
+
+return view('pages.bouquets-show', [
+    'bouquet' => $bouquet,
+]);
+```
+
+`findOrFail` is the database read. `displayImageUrl()` has not run yet.
+
+The public detail page is the line you should point at in the demo.
+
+`resources/views/pages/bouquets-show.blade.php` line 5:
+
+```blade
+<img src="{{ $bouquet->displayImageUrl() }}" alt="{{ $bouquet->title }}" class="h-full w-full object-cover min-h-[420px]">
+```
+
+`{{ }}` prints the string and escapes it. The browser then requests that `src`. Laravel is done. The web server follows `public/storage` to the WebP file.
+
+Lists do the same call, then a component draws the tag.
+
+`resources/views/pages/bouquets-index.blade.php` line 47, `resources/views/pages/home.blade.php` line 55, and `resources/views/member/favorites.blade.php` line 19 all pass `:image="$bouquet->displayImageUrl()"` into `<x-showcase-list-item>`. The actual tag is `resources/views/components/showcase-list-item.blade.php` lines 13 to 16:
+
+```blade
+<img
+    src="{{ $image }}"
+    alt="{{ $alt !== '' ? $alt : $title }}"
+    class="h-20 w-20 shrink-0 rounded-xl object-cover border border-gray-100 sm:h-24 sm:w-24"
+>
+```
+
+`h-20 w-20` is why the list looks like a thumbnail. The `src` is still the full WebP.
+
+The admin list is `resources/views/admin/posts/index.blade.php` line 27, `:image="$post->displayImageUrl()"`. Trash is the same call at `resources/views/admin/posts/trash.blade.php` line 21. Both use `<x-admin-post-list-item>`, which on line 9 passes that URL into `<x-admin-photo-thumb>`. The tag is `resources/views/components/admin-photo-thumb.blade.php` line 16:
+
+```blade
+<img src="{{ $src }}" alt="" class="{{ $sizeClass }} rounded-xl object-cover border border-gray-100">
+```
+
+Edit uses the same component at `resources/views/admin/posts/edit.blade.php` line 44, with `size="lg"`. The click on line 14 of the thumb component sends that same `src` to the modal. The modal image is `resources/views/components/admin-photo-preview-shell.blade.php` lines 34 to 37, `:src="previewSrc"`. No second encode. No second file.
+
+One page does not show the upload. `resources/views/posts/show.blade.php` line 9 calls `$post->galleryImageUrl()`, not `displayImageUrl()`. That is the member URL `/posts/{id}`. Demo the watermark on `/bouquets/{id}` instead.
 
 ## Edit, trash, and delete
 

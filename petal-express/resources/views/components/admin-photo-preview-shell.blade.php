@@ -9,14 +9,14 @@
     <div
         x-show="previewOpen"
         x-cloak
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
         role="dialog"
         aria-modal="true"
         :aria-label="previewTitle ? 'Photo preview for ' + previewTitle : 'Photo preview'"
     >
-        <div class="absolute inset-0 bg-gray-900/80" @click="previewOpen = false"></div>
+        <div class="absolute inset-0 bg-gray-900" style="opacity: 0.8" @click="previewOpen = false"></div>
 
-        <div class="relative z-10 w-full max-w-4xl rounded-[2rem] border border-gray-100 bg-white p-4 sm:p-6 shadow-xl">
+        <div class="relative z-10 w-full max-w-4xl rounded-[2rem] border border-gray-100 bg-white p-4 shadow-xl sm:p-6">
             <div class="flex items-start justify-between gap-4 mb-4">
                 <div class="min-w-0">
                     <p class="text-xs font-semibold uppercase tracking-widest text-accent">Watermark preview</p>
