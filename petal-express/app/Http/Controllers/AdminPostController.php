@@ -129,7 +129,7 @@ class AdminPostController extends Controller
         if (! $post->trashed()) {
             return redirect()
                 ->route('admin.posts.index')
-                ->with('error', 'Move the bouquet to Trash before deleting it forever.');
+                ->with('error', 'Move the bouquet to Trash before deleting it.');
         }
 
         $imagePath = $post->image;
@@ -142,7 +142,7 @@ class AdminPostController extends Controller
 
         return redirect()
             ->route('admin.posts.trash')
-            ->with('success', 'Bouquet deleted forever.');
+            ->with('success', 'Bouquet deleted.');
     }
 
     // resize, watermark, save as webp under storage/app/public/products

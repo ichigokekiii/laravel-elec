@@ -6,7 +6,11 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div
+        class="py-12"
+        x-data="{ deleteOpen: false, deleteTitle: '', deleteAction: '' }"
+        @keydown.escape.window="deleteOpen = false"
+    >
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <x-admin-photo-preview-shell>
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-[2rem] border border-gray-100">
@@ -26,11 +30,13 @@
                                         @method('PATCH')
                                         <button type="submit" class="inline-flex items-center min-h-11 text-xs font-semibold uppercase tracking-wide text-accent hover:underline">Restore</button>
                                     </form>
-                                    <form method="POST" action="{{ route('admin.posts.force', $post) }}" onsubmit="return confirm('Delete this bouquet forever? This cannot be undone.')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="inline-flex items-center min-h-11 text-xs font-semibold uppercase tracking-wide text-red-700 hover:underline">Delete forever</button>
-                                    </form>
+                                    <button
+                                        type="button"
+                                        class="inline-flex items-center min-h-11 text-xs font-semibold uppercase tracking-wide text-red-700 hover:underline"
+                                        @click="deleteTitle = @js($post->title); deleteAction = @js(route('admin.posts.force', $post)); deleteOpen = true"
+                                    >
+                                        Delete
+                                    </button>
                                 </div>
                             </div>
                         @empty
@@ -41,6 +47,42 @@
             </x-admin-photo-preview-shell>
 
             {{ $posts->links() }}
+        </div>
+
+        <div
+            x-show="deleteOpen"
+            x-cloak
+            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-bouquet-title"
+        >
+            <div class="absolute inset-0 bg-gray-900" style="opacity: 0.8" @click="deleteOpen = false"></div>
+
+            <form method="POST" x-bind:action="deleteAction" class="relative z-10 w-full max-w-md rounded-[2rem] border border-gray-100 bg-white p-6 shadow-xl sm:p-8">
+                @csrf
+                @method('DELETE')
+                <h3 id="delete-bouquet-title" class="font-playfair text-2xl font-bold text-gray-900">Delete this bouquet?</h3>
+                <p class="mt-3 text-sm text-gray-600">
+                    <span class="font-semibold text-gray-900" x-text="deleteTitle"></span>
+                    and its photo will be removed. This cannot be undone.
+                </p>
+                <div class="mt-6 flex flex-wrap items-center gap-3">
+                    <button
+                        type="button"
+                        class="inline-flex min-h-11 items-center rounded-full border border-gray-200 bg-white px-5 text-xs font-semibold uppercase tracking-wide text-gray-700 hover:text-accent"
+                        @click="deleteOpen = false"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        class="inline-flex min-h-11 items-center rounded-full bg-red-700 px-5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-red-800"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </x-app-layout>

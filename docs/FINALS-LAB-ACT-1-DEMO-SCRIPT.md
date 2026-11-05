@@ -131,7 +131,7 @@ Click **Restore**.
 
 **Show.** The row back on the main list.
 
-Click **Delete** again, open **Trash**, and click **Delete forever**. Confirm the prompt.
+Click **Delete** again, open **Trash**, and click **Delete**. Confirm in the modal. The toast says Bouquet deleted.
 
 **Say.** `forceDelete()` removes the row, then `Storage::disk('public')->delete()` removes that WebP. The route uses `withTrashed()` so Laravel can still find the trashed model.
 

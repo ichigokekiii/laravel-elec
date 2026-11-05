@@ -31,7 +31,7 @@ App path: `petal-express/`. Bouquets are the instructor products.
 
 6. **Restore** — Restore. Bouquet returns to the showcase.
 
-7. **Force delete** — Soft-delete again, then Delete forever in Trash.
+7. **Force delete** — Soft-delete again, then Delete in Trash. Confirm in the modal.
    - Row gone from database; WebP file removed from storage.
 
 ## Oral defense mapping

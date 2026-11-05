@@ -29,7 +29,7 @@ These are not the same file. Do not mix them up in the demo.
 | The stamp | `petal-express/public/images/watermark.png` | Fixed name `watermark.png` | There is one mark for every bouquet. The controller always opens this path. A random name would make that line fail. |
 | The saved bouquet photo | `petal-express/storage/app/public/products/<uuid>.webp` | New random name every upload | The visitor's file might also be called `rose.jpg`. Two uploads must not overwrite each other. The extension is `.webp` because that is the format we encode, not the format they uploaded. |
 
-Measured on this machine on 5 Nov 2026. `watermark.png` is a PNG, 560 by 160 pixels, with transparency. One saved bouquet photo is `products/0f95b48d-2d8d-4a6e-8406-0aa6522e34ec.webp`. The `file` command reports a WebP image, 800 by 800. Row 107 in `showcase_flowers` stores that same path for the title `Manual PDF PNG Upload`.
+Measured on this machine on 5 Nov 2026. `watermark.png` is a PNG, 560 by 160 pixels, with transparency. 560 to 160 is 3.5 to 1, a wide short mark. One saved bouquet photo is `products/8bfef734-0640-407f-af5d-a6f47d24a581.webp`. Pillow reports a WebP, 800 by 1150. Row 101 in `showcase_flowers` stores that same path for the title `Progress Report Bouquet`. Another upload, `favorite ceo`, is 1000 by 1000 because `scaleDown(width: 1000)` pulled a wider square down to 1000 and kept the square shape.
 
 The stamp lives in `public/images` because it is part of the project. You commit it. You do not upload it per bouquet.
 
@@ -40,32 +40,44 @@ The bouquet photo lives under `storage/app/public` because uploads should not si
 A real stored value is this whole string.
 
 ```text
-products/0f95b48d-2d8d-4a6e-8406-0aa6522e34ec.webp
+products/8bfef734-0640-407f-af5d-a6f47d24a581.webp
 ```
 
 Read it in three pieces.
 
 1. `products/` is the folder inside the public disk. Bouquet photos stay in one place. The watermark is not in this folder.
-2. `0f95b48d-2d8d-4a6e-8406-0aa6522e34ec` comes from `Str::uuid()` in the controller. A UUID is a random id in the shape 8-4-4-4-12 hexadecimal characters. Laravel generates it. We do not use the visitor's filename. Their name can repeat, can contain spaces, and can be guessed. We do not use the database id either. The file is written before `Post::create()` returns the new id.
+2. `8bfef734-0640-407f-af5d-a6f47d24a581` comes from `Str::uuid()` in the controller. A UUID is a random id in the shape 8-4-4-4-12 hexadecimal characters. Laravel generates it. The visitor's filename is not used. Their name can repeat, can contain spaces, and can be guessed. The database id is not used either. The file is written before `Post::create()` returns the new id.
 3. `.webp` matches `Format::WEBP`. The bytes are WebP. The name says WebP. If we kept `.jpg` on a WebP file, the teacher and the browser would disagree about what the file is.
 
 The browser URL is not the folder path. It is `/storage/` plus the stored string.
 
 ```text
-/storage/products/0f95b48d-2d8d-4a6e-8406-0aa6522e34ec.webp
+/storage/products/8bfef734-0640-407f-af5d-a6f47d24a581.webp
 ```
 
 `/storage` works because `php artisan storage:link` created a shortcut. On this machine `petal-express/public/storage` points at `petal-express/storage/app/public`. The web server is only allowed to read `public/`. The shortcut lets it read the public disk without moving the file into `public/images`.
 
 ## What the thumbnail is
 
-Intervention does not save a thumbnail file. There is no `products/<uuid>-thumb.webp`.
+Intervention saves one file. There is no `products/<uuid>-thumb.webp`.
 
-The admin list shows a small box. The CSS classes on `admin-photo-thumb` set that box to about 80 by 80 pixels, or 96 by 96 on a wider screen. The `src` of that `<img>` is the full WebP URL. The browser shrinks it. The edit page and the public detail page use the same URL in a larger box.
+The admin list shows a small box. `admin-photo-thumb` sets that box to `h-12 w-12`, which is 48 by 48 CSS pixels. The edit page uses `size="lg"`, which is `h-24 w-24`, 96 by 96. The `src` of that `<img>` is the full WebP URL. The browser draws the same file inside the box.
 
-Click the small photo and the preview modal loads that same `src` again. You see the watermark because the box is large, not because a second file exists.
+## Aspect ratio, in plain words
 
-We do it this way so there is one file to delete later. A second thumbnail would need its own column, its own watermark pass, and its own delete.
+Aspect ratio is how wide a picture is compared with how tall it is. A square is 1 to 1. The stamp is 560 by 160, which is 3.5 to 1. Bouquet 101 is 800 by 1150, about 16 to 23.
+
+`scaleDown(width: 1000)` changes width and height by the same factor. A tall photo stays tall. A square stays square. Bouquet 101 was already narrower than 1000, so both numbers stayed. `favorite ceo` was a square wider than 1000, so it became 1000 by 1000.
+
+The page can crop later, in CSS.
+
+The admin list class is `object-cover` on a 48 by 48 square. `object-cover` fills the square and cuts off the extra height. For the 800 by 1150 file, the square keeps the middle and cuts about 175 pixels from the top and 175 from the bottom. The mark sits in that bottom strip, so the small list photo can hide it.
+
+The preview class is `object-contain`. That fits the whole photo in the box and leaves empty space on the sides. On a 1280 by 900 window the preview box measured 846 by 675, and the file inside it is still 800 by 1150. The mark shows there. Click the small photo when you want the teacher to see the mark.
+
+The public detail class is `object-cover` with `min-h-[420px]`. On that same window the box measured 414 by 595. That matches 800 to 1150, so this screen shows the whole photo, including the mark. A different window width can cut it, because the class is still `object-cover`.
+
+One file means delete forever has one path to remove. A second thumbnail would need its own column, its own watermark pass, and its own delete.
 
 ## The full path of one upload
 
@@ -112,7 +124,7 @@ This method is the Intervention part. It lives at the bottom of `AdminPostContro
 
 `Image::decode($file)` reads the upload. After this line the code no longer cares that the original was JPG or PNG. Intervention's GD driver on this machine does the pixel work. The PHP `gd` extension was loaded when this was checked. The controller does not name GD. Intervention picks the driver.
 
-`$image->scaleDown(width: 1000)` shrinks the photo only when it is wider than 1000 pixels. A smaller photo stays at its own size. Height keeps the same shape. This is why one saved file was 800 by 800. The upload was not wider than 1000, so the width stayed 800.
+`$image->scaleDown(width: 1000)` shrinks the photo only when it is wider than 1000 pixels. Height changes by the same factor. Bouquet 101 stayed 800 by 1150 because the upload was already narrower than 1000.
 
 The method then opens `public_path('images/watermark.png')`. `public_path()` is Laravel for "file inside the `public` folder". If that PNG is missing, it throws `Watermark not found` and `Post::create()` has not run yet, so you get no row and no WebP.
 
@@ -155,7 +167,7 @@ public function displayImageUrl(): string
 }
 ```
 
-Line 59 checks that the column is not empty. Line 61 checks that the WebP is really on the public disk. Line 62 is the line that displays an upload. For bouquet 107 it returns `/storage/products/0f95b48d-2d8d-4a6e-8406-0aa6522e34ec.webp`.
+Line 59 checks that the column is not empty. Line 61 checks that the WebP is really on the public disk. Line 62 is the line that displays an upload. For bouquet 101 it returns `/storage/products/8bfef734-0640-407f-af5d-a6f47d24a581.webp`.
 
 We do not call `Storage::url()`. That helper sticks `APP_URL` on the front. If `APP_URL` is `http://localhost` and you opened `http://127.0.0.1:8000`, the image request goes to the wrong host. A path that starts with `/storage/` uses whatever host is already in the address bar.
 
@@ -199,13 +211,13 @@ Lists do the same call, then a component draws the tag.
 
 `h-20 w-20` is why the list looks like a thumbnail. The `src` is still the full WebP.
 
-The admin list is `resources/views/admin/posts/index.blade.php` line 27, `:image="$post->displayImageUrl()"`. Trash is the same call at `resources/views/admin/posts/trash.blade.php` line 21. Both use `<x-admin-post-list-item>`, which on line 9 passes that URL into `<x-admin-photo-thumb>`. The tag is `resources/views/components/admin-photo-thumb.blade.php` line 16:
+The admin list is `resources/views/admin/posts/index.blade.php` line 27, `<x-admin-photo-thumb :src="$post->displayImageUrl()" :title="$post->title" />`. Trash is the same call at `resources/views/admin/posts/trash.blade.php` line 17. The tag is `resources/views/components/admin-photo-thumb.blade.php` line 17:
 
 ```blade
 <img src="{{ $src }}" alt="" class="{{ $sizeClass }} rounded-xl object-cover border border-gray-100">
 ```
 
-Edit uses the same component at `resources/views/admin/posts/edit.blade.php` line 44, with `size="lg"`. The click on line 14 of the thumb component sends that same `src` to the modal. The modal image is `resources/views/components/admin-photo-preview-shell.blade.php` lines 34 to 37, `:src="previewSrc"`. No second encode. No second file.
+Edit uses the same component at `resources/views/admin/posts/edit.blade.php` line 51, with `size="lg"`. The click on line 15 of the thumb component sends that same `src` to the modal. The modal image is `resources/views/components/admin-photo-preview-shell.blade.php` lines 34 to 37, `:src="previewSrc"`, with `object-contain`. Still one file.
 
 One page does not show the upload. `resources/views/posts/show.blade.php` line 9 calls `$post->galleryImageUrl()`, not `displayImageUrl()`. That is the member URL `/posts/{id}`. Demo the watermark on `/bouquets/{id}` instead.
 
@@ -217,11 +229,51 @@ One page does not show the upload. `resources/views/posts/show.blade.php` line 9
 
 **Delete on the list.** `destroy()` calls `$post->delete()`. `Post` uses `SoftDeletes`, so this only sets `deleted_at`. The WebP stays in `storage/app/public/products`. Trash can still show it.
 
-**Delete forever.** `forceDelete()` copies the path, removes the row, then runs `Storage::disk('public')->delete($imagePath)`. The route uses `withTrashed()` so Laravel can still load a row that is already in the trash. The method refuses a bouquet that is not trashed.
+**Delete from Trash.** `forceDelete()` copies the path, removes the row, then runs `Storage::disk('public')->delete($imagePath)`. The Trash button says Delete and asks in a modal. The toast says Bouquet deleted. The route uses `withTrashed()` so Laravel can still load a row that is already in the trash. The method refuses a bouquet that is not trashed.
+
+## Why the mark is words inside a PNG
+
+The stamp looks like the words petal express. The file is still an image, `public/images/watermark.png`. It is a PNG, 560 by 160, with a transparent background. `saveWatermarkedImage()` does not draw those letters. It calls `Image::decode` on that PNG, then `insert()`.
+
+Intervention can draw text with a `text()` method. This lab does not call it. `text()` needs a font file on the computer that runs the upload. If that font is missing in the demo, every save fails. The PNG already has the font, the blue color, and the letter spacing. The controller only places the file.
+
+A picture of flowers would cover the bouquet. Words with a transparent background stay readable in the corner. One PNG is shared by every upload. The controller always opens `public/images/watermark.png`.
+
+## What else Intervention does
+
+The watermark is one step. The same method uses Intervention for the rest of the photo.
+
+- `Image::decode` reads the upload, so a JPG, a PNG, and a WebP become one picture.
+- `scaleDown(width: 1000)` resizes the photo and keeps the aspect ratio.
+- `scaleDown` runs again on the stamp, up to 38 percent of the photo width and never wider than 320 pixels.
+- `insert()` paints the stamp 12 pixels in from the bottom-right at 0.55 opacity.
+- `encodeUsingFormat(Format::WEBP, quality: 80)` makes the WebP bytes.
+
+`Alignment::BOTTOM_RIGHT` and `Format::WEBP` are settings for those calls. This lab does not blur, crop, flip, or build a second thumbnail file.
+
+## If sir says make a field required
+
+On Add bouquet, name, description, price, category, and photo are already required. The rules are `PostRequest.php` lines 28 to 32. The tags in `create.blade.php` already have the HTML attribute `required`.
+
+Edit is the change you can make in the room. `PostRequest.php` line 24 uses `nullable` for `image` on update. `edit.blade.php` line 56 is a file input with no `required` attribute. An empty photo on Edit keeps the old file.
+
+Do this if sir says make the photo required.
+
+1. In `PostRequest.php` line 24, replace `nullable` with `required`.
+2. In `edit.blade.php` line 56, add `required` on the file input. `create.blade.php` line 48 already has that word.
+3. Do not add a migration. The column can stay nullable. The form rule is the check.
+
+`messages()` already has `image.required` set to `Please upload a photo for this bouquet.` Save both files. Open a bouquet, choose Edit, leave Photo empty, and click Save changes. The form comes back with that sentence under Photo. `saveWatermarkedImage()` does not run.
+
+If the field sir names is already required, say the line and submit the form empty. Do not add `required` a second time. If sir names a different field, the rule key must match the input `name`. Put `required` in the rule array and on the tag. The HTML attribute stops a normal browser. `PostRequest` still checks the request when that attribute is skipped.
 
 ## What you can say if you forget a name
 
-The stamp is `public/images/watermark.png`.
+The stamp is `public/images/watermark.png`. It is a PNG of the words petal express. Intervention does not draw the letters.
+
+The other Intervention calls are `decode`, `scaleDown`, `insert`, and `encodeUsingFormat` to WebP.
+
+If sir says make the edit photo required, change `nullable` to `required` on `PostRequest.php` line 24 and add `required` on `edit.blade.php` line 56.
 
 The saved photo is `storage/app/public/products/` plus a UUID plus `.webp`.
 

@@ -20,9 +20,9 @@
                             <x-input-label for="price" value="Price" />
                             <div class="mt-2 flex rounded-md shadow-sm">
                                 <span class="inline-flex items-center rounded-l-md border border-gray-300 bg-gray-50 px-3 text-sm font-semibold text-accent">₱</span>
-                                <x-text-input id="price" name="price" type="number" min="0" step="1" class="block w-full" :value="old('price')" placeholder="1299" required />
+                                <x-text-input id="price" name="price" type="text" inputmode="numeric" maxlength="16" pattern="\d{1,16}" class="block w-full" :value="old('price')" placeholder="1299" required oninput="this.value=this.value.split('.')[0].replace(/\D/g,'').slice(0,16)" />
                             </div>
-                            <p class="mt-1 text-xs text-gray-500">Numbers only. Saved with ₱ on the showcase.</p>
+                            <p class="mt-1 text-xs text-gray-500">Up to 16 digits. No decimals. Saved with ₱ on the showcase.</p>
                             <x-input-error class="mt-2" :messages="$errors->get('price')" />
                         </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 // shared rules for admin create and edit
@@ -16,7 +17,7 @@ class PostRequest extends FormRequest
     }
 
     /**
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -27,7 +28,7 @@ class PostRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
-            'price' => ['required', 'integer', 'min:0'],
+            'price' => ['bail', 'required', 'regex:/^\d{1,16}$/'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'image' => $imageRules,
         ];
@@ -40,11 +41,8 @@ class PostRequest extends FormRequest
             return;
         }
 
-        $digits = preg_replace('/\D/', '', (string) $this->input('price'));
-
-        if ($digits !== '') {
-            $this->merge(['price' => (int) $digits]);
-        }
+        $raw = trim((string) $this->input('price'));
+        $this->merge(['price' => $raw]);
     }
 
     /**
@@ -72,14 +70,15 @@ class PostRequest extends FormRequest
             'title.required' => 'Please give the bouquet a name.',
             'body.required' => 'Please add a short description.',
             'price.required' => 'Please add a price.',
-            'price.integer' => 'Enter the price as a whole number (no ₱ sign).',
-            'price.min' => 'Price cannot be negative.',
+            'price.regex' => 'Use up to 16 digits, with no decimals.',
             'category_id.required' => 'Please pick a category.',
             'category_id.exists' => 'That category is not in the list.',
             'image.required' => 'Please upload a photo for this bouquet.',
             'image.image' => 'The file must be a photo.',
             'image.mimes' => 'Use JPG, PNG, or WebP.',
             'image.max' => 'The photo must be 3 MB or smaller.',
+            // PHP rejects the file before max:3072 can run, then Laravel says the upload failed.
+            'image.uploaded' => 'The photo must be 3 MB or smaller.',
         ];
     }
 }
