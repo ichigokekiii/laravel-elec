@@ -13,6 +13,7 @@ use Illuminate\View\View;
 use Intervention\Image\Alignment;
 use Intervention\Image\Format;
 use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Facades\Auth;
 
 // admin manages showcase bouquets (stored as posts)
 class AdminPostController extends Controller
@@ -42,7 +43,7 @@ class AdminPostController extends Controller
             'price' => $data['price'],
             'category_id' => $data['category_id'],
             'image' => $this->saveWatermarkedImage($request->file('image')),
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
         ]);
 
         return redirect()
